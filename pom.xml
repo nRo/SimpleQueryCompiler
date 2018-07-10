@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.alexgruen</groupId>
+    <artifactId>querycompiler</artifactId>
+    <version>0.3-SNAPSHOT</version>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+    <name>SimpleQueryCompiler</name>
+    <description>Simple QueryCompiler for Java</description>
+    <url>https://github.com/nRo/SimpleQueryCompiler</url>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+    <scm>
+        <url>https://github.com/nRo/SimpleQueryCompiler</url>
+        <connection>scm:git:https://github.com/nRo/SimpleQueryCompiler.git</connection>
+        <tag>HEAD</tag>
+    </scm>
+    <developers>
+        <developer>
+            <name>Alexander Grün</name>
+            <email>al.gruen@gmx.de</email>
+            <id>alexgruen</id>
+        </developer>
+    </developers>
+
+
+
+    <dependencies>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>4.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>4.7.1</version>
+                <configuration>
+                    <visitor>true</visitor>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>maven.alexgruen.de-releases</name>
+            <url>http://maven.alexgruen.de/artifactory/public-release</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>maven.alexgruen.de-snapshots</name>
+            <url>http://maven.alexgruen.de/artifactory/public-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>
