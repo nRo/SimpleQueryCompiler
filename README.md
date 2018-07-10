@@ -193,6 +193,7 @@ User can than input queries like:;
 ```
 x PHRASE 'test phrase' || y == 'test'
 ```
+
 ```java
   QueryCompiler<ElasticSearchQuery> compiler = QueryCompiler
         .create(ElasticSearchQuery.class)
