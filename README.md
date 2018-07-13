@@ -1,4 +1,8 @@
 # Simple Query Compiler
+![travis](https://travis-ci.org/nRo/SimpleQueryCompiler.svg?branch=master)
+[![codecov](https://codecov.io/gh/nRo/SimpleQueryCompiler/branch/master/graph/badge.svg)](https://codecov.io/gh/nRo/SimpleQueryCompiler)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a03214f7198f4461ab341adecb75e0da)](https://www.codacy.com/app/nRo/DataFrame?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nRo/DataFrame&amp;utm_campaign=Badge_Grade)
+
 A Java library to compile and parse simple filter queries.
 
 The following query formats can be parsed:
@@ -20,9 +24,6 @@ Logical operators:
 ```
 AND, OR, XOR, NOR
 ```
-![travis](https://travis-ci.org/nRo/SimpleQueryCompiler.svg?branch=master)
-[![codecov](https://codecov.io/gh/nRo/SimpleQueryCompiler/branch/master/graph/badge.svg)](https://codecov.io/gh/nRo/SimpleQueryCompiler)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a03214f7198f4461ab341adecb75e0da)](https://www.codacy.com/app/nRo/DataFrame?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nRo/DataFrame&amp;utm_campaign=Badge_Grade)
 
 Install
 -------
