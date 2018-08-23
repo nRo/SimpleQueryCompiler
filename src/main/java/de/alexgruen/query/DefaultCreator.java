@@ -32,6 +32,19 @@ public abstract class DefaultCreator<T> {
 
     /**
      * Query creator for != operator
+     *
+     * @param queryNode current query node
+     * @param field input field
+     * @param value input value
+     * @return created query object
+     */
+    public T ne(QueryNode queryNode, Field field, Value value) {
+        return ne(field, value);
+    }
+
+    /**
+     * Query creator for != operator
+     *
      * @param field input field
      * @param value input value
      * @return created query object
@@ -42,6 +55,7 @@ public abstract class DefaultCreator<T> {
 
     /**
      * Query creator for == operator
+     *
      * @param field input field
      * @param value input value
      * @return created query object
@@ -50,8 +64,34 @@ public abstract class DefaultCreator<T> {
         throw new QueryCompilerException("'eq' operator is not allowed");
     }
 
+
+    /**
+     * Query creator for == operator
+     *
+     * @param queryNode current query node
+     * @param field input field
+     * @param value input value
+     * @return created query object
+     */
+    public T eq(QueryNode queryNode, Field field, Value value) {
+        return eq(field, value);
+    }
+
     /**
      * Query creator for >= operator
+     *
+     * @param queryNode current query node
+     * @param field input field
+     * @param value input value
+     * @return created query object
+     */
+    public T ge(QueryNode queryNode, Field field, Value value) {
+        return ge(field, value);
+    }
+
+    /**
+     * Query creator for >= operator
+     *
      * @param field input field
      * @param value input value
      * @return created query object
@@ -62,6 +102,19 @@ public abstract class DefaultCreator<T> {
 
     /**
      * Query creator for > operator
+     *
+     * @param queryNode current query node
+     * @param field input field
+     * @param value input value
+     * @return created query object
+     */
+    public T gt(QueryNode queryNode, Field field, Value value) {
+        return gt(field, value);
+    }
+
+    /**
+     * Query creator for > operator
+     *
      * @param field input field
      * @param value input value
      * @return created query object
@@ -72,6 +125,19 @@ public abstract class DefaultCreator<T> {
 
     /**
      * Query creator for < operator
+     *
+     * @param queryNode current query node
+     * @param field input field
+     * @param value input value
+     * @return created query object
+     */
+    public T lt(QueryNode queryNode, Field field, Value value) {
+        return lt(field, value);
+    }
+
+    /**
+     * Query creator for < operator
+     *
      * @param field input field
      * @param value input value
      * @return created query object
@@ -82,6 +148,20 @@ public abstract class DefaultCreator<T> {
 
     /**
      * Query creator for <= operator
+     *
+     * @param queryNode current query node
+     * @param field input field
+     * @param value input value
+     * @return created query object
+     */
+    public T le(QueryNode queryNode, Field field, Value value) {
+        return le(field, value);
+    }
+
+
+    /**
+     * Query creator for <= operator
+     *
      * @param field input field
      * @param value input value
      * @return created query object
@@ -92,6 +172,20 @@ public abstract class DefaultCreator<T> {
 
     /**
      * Query creator for the regex operator
+     *
+     * @param queryNode current query node
+     * @param field input field
+     * @param value input value
+     * @return created query object
+     */
+    public T regex(QueryNode queryNode, Field field, Value value) {
+        return regex(field, value);
+    }
+
+
+    /**
+     * Query creator for the regex operator
+     *
      * @param field input field
      * @param value input value
      * @return created query object
@@ -102,6 +196,19 @@ public abstract class DefaultCreator<T> {
 
     /**
      * Query creator for the text operator
+     *
+     * @param queryNode current query node
+     * @param field input field
+     * @param value input value
+     * @return created query object
+     */
+    public T text(QueryNode queryNode, Field field, Value value) {
+        return text(field, value);
+    }
+
+    /**
+     * Query creator for the text operator
+     *
      * @param field input field
      * @param value input value
      * @return created query object
@@ -112,6 +219,18 @@ public abstract class DefaultCreator<T> {
 
     /**
      * Logic creator for the negation of a query
+     *
+     * @param queryNode current query node
+     * @param v input query
+     * @return created query object
+     */
+    public T not(QueryNode queryNode, T v) {
+        return not(v);
+    }
+
+    /**
+     * Logic creator for the negation of a query
+     *
      * @param v input query
      * @return created query object
      */
@@ -121,6 +240,18 @@ public abstract class DefaultCreator<T> {
 
     /**
      * Logic creator for the AND concatenation of queries
+     *
+     * @param queryNode current query node
+     * @param v input queries
+     * @return created query object
+     */
+    public T and(QueryNode queryNode, T... v) {
+        return and(v);
+    }
+
+    /**
+     * Logic creator for the AND concatenation of queries
+     *
      * @param v input queries
      * @return created query object
      */
@@ -130,6 +261,18 @@ public abstract class DefaultCreator<T> {
 
     /**
      * Logic creator for the OR concatenation of queries
+     *
+     * @param queryNode current query node
+     * @param v input queries
+     * @return created query object
+     */
+    public T or(QueryNode queryNode, T... v) {
+        return or(v);
+    }
+
+    /**
+     * Logic creator for the OR concatenation of queries
+     *
      * @param v input queries
      * @return created query object
      */
@@ -139,6 +282,18 @@ public abstract class DefaultCreator<T> {
 
     /**
      * Logic creator for the XOR concatenation of queries
+     *
+     * @param queryNode current query node
+     * @param v input queries
+     * @return created query object
+     */
+    public T xor(QueryNode queryNode, T... v) {
+        return xor(v);
+    }
+
+    /**
+     * Logic creator for the XOR concatenation of queries
+     *
      * @param v input queries
      * @return created query object
      */
@@ -148,6 +303,18 @@ public abstract class DefaultCreator<T> {
 
     /**
      * Logic creator for the NOR concatenation of queries
+     *
+     * @param queryNode current query node
+     * @param v input queries
+     * @return created query object
+     */
+    public T nor(QueryNode queryNode, T... v) {
+        return nor(v);
+    }
+
+    /**
+     * Logic creator for the NOR concatenation of queries
+     *
      * @param v input queries
      * @return created query object
      */
@@ -157,6 +324,7 @@ public abstract class DefaultCreator<T> {
 
     /**
      * Term creator for fulltext search queries
+     *
      * @param value input value
      * @return created query object
      */
@@ -166,6 +334,7 @@ public abstract class DefaultCreator<T> {
 
     /**
      * Term creator for empty queries (match all)
+     *
      * @return created query object
      */
     public T empty() {

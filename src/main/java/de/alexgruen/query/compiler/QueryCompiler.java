@@ -124,14 +124,14 @@ public class QueryCompiler<T extends Query> {
             if(context.getEmptyCreator() == null){
                 throw new QueryCompilerException("no empty creator defined");
             }
-            return context.getEmptyCreator().create(null,null);
+            return context.getEmptyCreator().create(node,null,null);
         }
         //return if node contains term
         if (node.getTerm() != null) {
-            T t = createTerm(node.getTerm());
+            T t = createTerm(node, node.getTerm());
             //negate term if required
             if (node.isNegate()) {
-                t = negate(t);
+                t = negate(node, t);
             }
             return t;
         }
@@ -146,9 +146,9 @@ public class QueryCompiler<T extends Query> {
 
         //Create new term using child terms and logical operation
         LogicCreator<T> logicCreator = context.getLogicCreator(node.getOperator());
-        T t = logicCreator.create(terms);
+        T t = logicCreator.create(node, terms);
         if (node.isNegate()) {
-            t = negate(t);
+            t = negate(node, t);
         }
         return t;
     }
@@ -158,10 +158,10 @@ public class QueryCompiler<T extends Query> {
      * @param t input object
      * @return negated object
      */
-    private T negate(T t) {
+    private T negate(QueryNode node, T t) {
         T[] a = CompilerUtil.createArray(context.getCl(), 1);
         a[0] = t;
-        return context.getLogicCreator(LogicalOperators.NOT).create(a);
+        return context.getLogicCreator(LogicalOperators.NOT).create(node, a);
     }
 
     /**
@@ -169,9 +169,9 @@ public class QueryCompiler<T extends Query> {
      * @param term input term
      * @return object of target class
      */
-    private T createTerm(Term term) {
+    private T createTerm(QueryNode node, Term term) {
         TermCreator<T> creator = context.getTermCreator(term.getOperator());
-        return creator.create(term.getField(), term.getValue());
+        return creator.create(node, term.getField(), term.getValue());
     }
 
     /**

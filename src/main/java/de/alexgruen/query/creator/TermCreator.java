@@ -24,15 +24,17 @@
 
 package de.alexgruen.query.creator;
 
+import de.alexgruen.query.QueryNode;
 import de.alexgruen.query.term.Field;
 import de.alexgruen.query.term.Value;
 
 public interface TermCreator<T> extends OperatorCreator {
     /**
      * Crates a Query of the desired type from a {@link Field} and {@link Value}
+     * @param node query node
      * @param field input field
      * @param value input value
      * @return query
      */
-    public T create(Field field, Value value);
+    T create(QueryNode node, Field field, Value value);
 }

@@ -127,7 +127,7 @@ public class CompileTest {
                 .withDefaultCreator(new PrintQueryCreator())
                 .withTermCreator(
                         new TermOperator("&="),
-                        (f,v) -> new PrintQuery() {
+                        (n,f,v) -> new PrintQuery() {
                             @Override
                             public String toString() {
                                 return String.format("(%s &= %s)", f, PrintQueryCreator.value2string(v));

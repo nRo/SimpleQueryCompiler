@@ -26,16 +26,14 @@ package de.alexgruen.query;
 
 import de.alexgruen.query.term.Term;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class QueryNode {
     private boolean negate;
     private LogicalOperator operator;
     private Term term;
     private List<QueryNode> children = new ArrayList<>();
-
+    private Map<String, Object> attributes = new HashMap<>();
 
     public QueryNode() {
     }
@@ -71,6 +69,36 @@ public class QueryNode {
         this(false, operator, null, Arrays.asList(children));
     }
 
+    /**
+     * Returns the attributes map
+     * @return attributes map
+     */
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    /**
+     * Returns an attribute value or null if no attribute with the specified name is found.
+     * @param name attribute name
+     * @return value
+     */
+    public Object getAttribute(String name){
+        return attributes.get(name);
+    }
+
+    /**
+     * Sets the value of an attribute. Returns the previously set value or null
+     * @param name attribute name
+     * @param value attribute value
+     * @return previous value or null
+     */
+    public Object setAttribute(String name, Object value){
+        return attributes.put(name,value);
+    }
+    /**
+     * Creates a new leaf node from a term
+     * @param term term
+     */
 
     /**
      * Returns <tt>true</tt> if this node is negated
