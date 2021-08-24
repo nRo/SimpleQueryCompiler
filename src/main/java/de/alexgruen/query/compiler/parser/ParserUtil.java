@@ -97,9 +97,6 @@ public class ParserUtil {
                 )) {
                     throw new ParseException(String.format("illegal boolean value: %s", s), 0);
                 }
-                if(s.equals("f")){
-                    return false;
-                }
                 switch (s){
                     case "f":return false;
                     case "t":return true;

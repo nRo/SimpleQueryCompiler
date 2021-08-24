@@ -25,42 +25,6 @@ Logical operators:
 AND, OR, XOR, NOR
 ```
 
-Install
--------
-Add this to you pom.xml
-
-```xml
-<repositories>
-    <repository>
-        <id>alexgruen-snapshot</id>
-        <name>alexgruen-snapshot</name>
-        <url>http://maven.alexgruen.de/artifactory/public-snapshot</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-    </repository>
-    <repository>
-        <id>alexgruen-release</id>
-        <name>alexgruen-release</name>
-        <url>http://maven.alexgruen.de/artifactory/public-release</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </repository>
-    ...
-</repositories>
-...
-<dependencies>
-...
-    <dependency>
-        <groupId>de.alexgruen</groupId>
-        <artifactId>querycompiler</artifactId>
-        <version>0.3-SNAPSHOT</version>
-    </dependency>
-...
-</dependencies>
-```
-
 Build
 -----
 To build the library from sources:
