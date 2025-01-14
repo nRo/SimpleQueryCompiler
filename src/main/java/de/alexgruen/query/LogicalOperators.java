@@ -67,9 +67,9 @@ public class LogicalOperators {
                     NOT
             };
 
-
     /**
      * Returns a list with the default operators
+     *
      * @return default operators
      */
     public static List<LogicalOperator> getDefaultOperations() {

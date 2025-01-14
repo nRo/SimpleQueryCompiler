@@ -33,6 +33,7 @@ public abstract class Parser<T> {
 
     /**
      * Parse input String and returns the an object of type T
+     *
      * @param s input string
      * @return resulting object
      * @throws ParseException throw if there was an error during parsing
@@ -42,14 +43,14 @@ public abstract class Parser<T> {
     /**
      * Parse input String and returns the an object of type T.
      * If parsing doesn't work, null is returned
+     *
      * @param s input string
      * @return resulting object
      */
-    public T parseOrNull(String s){
-        try{
+    public T parseOrNull(String s) {
+        try {
             return parse(s);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }

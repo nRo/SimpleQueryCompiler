@@ -32,24 +32,27 @@ import de.alexgruen.query.term.Value;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.lang.reflect.Array;
+import java.util.List;
 
 
 public class CompilerUtil {
 
     /**
      * Creates an array of an input type and specified length
-     * @param cl class of array objects
+     *
+     * @param cl     class of array objects
      * @param length array length
-     * @param <T> type of array objects
+     * @param <T>    type of array objects
      * @return array of type T[]
      */
     @SuppressWarnings("unchecked")
-    public static <T> T[] createArray(Class<T> cl, int length){
+    public static <T> T[] createArray(Class<T> cl, int length) {
         return (T[]) Array.newInstance(cl, length);
     }
 
     /**
      * Creates a Value object from a value context
+     *
      * @param ctx value context
      * @return value object
      */
@@ -58,7 +61,19 @@ public class CompilerUtil {
     }
 
     /**
+     * Creates a Value object from a value context
+     *
+     * @param ctx value context
+     * @return value object
+     */
+    public static Value createListValue(QueryParser.Value_listContext ctx) {
+        List<Value> values = ctx.value().stream().map(CompilerUtil::createValue).toList();
+        return new Value(values);
+    }
+
+    /**
      * Creates a Value object from a full text search context
+     *
      * @param ctx text search context
      * @return value object
      */
@@ -68,10 +83,11 @@ public class CompilerUtil {
 
     /**
      * Creates a Value object from the nodes in a value context
-     * @param text node inner text
-     * @param NULL null node
+     *
+     * @param text   node inner text
+     * @param NULL   null node
      * @param NUMBER number node
-     * @param BOOL boolean node
+     * @param BOOL   boolean node
      * @return value object
      */
     public static Value createValue(String text, TerminalNode NULL, TerminalNode NUMBER, TerminalNode BOOL) {
@@ -119,6 +135,7 @@ public class CompilerUtil {
 
     /**
      * Creates a field from a variable context
+     *
      * @param ctx variable context
      * @return field object
      */

@@ -35,13 +35,14 @@ import java.util.List;
 
 /**
  * Contains all creators an information required by the query compiler
+ *
  * @param <T> type of compiled query object
  */
 public class QueryContext<T extends Query> {
-    private OperatorCreatorMap<TermOperator, TermCreator<T>> termCreators;
-    private OperatorCreatorMap<LogicalOperator, LogicCreator<T>> logicCreators;
-    private TermCreator<T> emptyCreator;
-    private Class<T> cl;
+    private final OperatorCreatorMap<TermOperator, TermCreator<T>> termCreators;
+    private final OperatorCreatorMap<LogicalOperator, LogicCreator<T>> logicCreators;
+    private final TermCreator<T> emptyCreator;
+    private final Class<T> cl;
 
     protected QueryContext(OperatorCreatorMap<TermOperator, TermCreator<T>> termCreators,
                            OperatorCreatorMap<LogicalOperator, LogicCreator<T>> logicCreators,
@@ -55,6 +56,7 @@ public class QueryContext<T extends Query> {
 
     /**
      * Returns the {@link TermOperator} defined by the input name or alias
+     *
      * @param op input operator name or alias
      * @return term operator
      */
@@ -64,6 +66,7 @@ public class QueryContext<T extends Query> {
 
     /**
      * Returns the {@link LogicalOperator} defined by the input name or alias
+     *
      * @param op input operator name or alias
      * @return logic operator
      */
@@ -74,33 +77,37 @@ public class QueryContext<T extends Query> {
     /**
      * Returns the {@link TermCreator} associated with the respective {@link TermOperator}.
      * Returns null if no creator is found
+     *
      * @param operator input operator
      * @return term creator or null if no creator found
      */
-    public TermCreator<T> getTermCreator(TermOperator operator){
+    public TermCreator<T> getTermCreator(TermOperator operator) {
         return termCreators.getCreator(operator);
     }
 
     /**
      * Returns the {@link LogicCreator} associated with the respective {@link LogicalOperator}.
      * Returns null if no creator is found
+     *
      * @param operator input operator
      * @return logic creator or null if no creator found
      */
-    public LogicCreator<T> getLogicCreator(LogicalOperator operator){
+    public LogicCreator<T> getLogicCreator(LogicalOperator operator) {
         return logicCreators.getCreator(operator);
     }
 
     /**
      * Return all names and aliases of available {@link TermOperator}
+     *
      * @return list of names and aliases
      */
-    public List<String> getAllTermOperatorAliases(){
+    public List<String> getAllTermOperatorAliases() {
         return termCreators.getAllAliases();
     }
 
     /**
      * Returns the {@link TermCreator} assigned for empty terms (match all)
+     *
      * @return term creator
      */
     public TermCreator<T> getEmptyCreator() {
@@ -109,6 +116,7 @@ public class QueryContext<T extends Query> {
 
     /**
      * Returns the class of resulting queries
+     *
      * @return class of resulting queries
      */
     public Class<T> getCl() {

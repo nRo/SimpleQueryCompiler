@@ -44,9 +44,10 @@ import java.util.List;
 public class TextSearchVisitor extends QueryBaseVisitor<QueryNode> {
 
     /**
-     * Creates the root query node from a full text search context
-     * A text search query tree only consists of a root node and leafs.
+     * Creates the root query node from a full-text search context
+     * A text search query tree only consists of a root node and leaves.
      * All children are joined using the AND operation.
+     *
      * @param ctx text search context
      * @return root query node
      */
@@ -71,28 +72,27 @@ public class TextSearchVisitor extends QueryBaseVisitor<QueryNode> {
         node.setOperator(LogicalOperators.AND);
 
 
-        if (required.size() > 0) {
-            for (int i = 0; i < required.size(); i++) {
+        if (!required.isEmpty()) {
+            for (Value value : required) {
                 node.getChildren().add(
                         new QueryNode(
                                 new Term(
                                         Field.ALL_FIELDS,
                                         TermOperators.FULL_TEXT,
-                                        required.get(i)
+                                        value
                                 )
                         )
                 );
             }
         }
 
-        if (forbidden.size() > 0) {
-            for (int i = 0; i < forbidden.size(); i++) {
-
+        if (!forbidden.isEmpty()) {
+            for (Value value : forbidden) {
                 QueryNode childNode = new QueryNode(
                         new Term(
                                 Field.ALL_FIELDS,
                                 TermOperators.FULL_TEXT,
-                                forbidden.get(i)
+                                value
                         )
                 );
                 childNode.setNegate(true);

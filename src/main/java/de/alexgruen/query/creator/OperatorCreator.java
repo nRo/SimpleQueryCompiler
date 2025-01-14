@@ -27,6 +27,5 @@ package de.alexgruen.query.creator;
 /**
  * Interface that is implemented by LogicCreators and TermCreators
  */
-public interface OperatorCreator
-{
+public interface OperatorCreator {
 }

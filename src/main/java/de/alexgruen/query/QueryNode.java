@@ -33,16 +33,17 @@ public class QueryNode {
     private LogicalOperator operator;
     private Term term;
     private List<QueryNode> children = new ArrayList<>();
-    private Map<String, Object> attributes = new HashMap<>();
+    private final Map<String, Object> attributes = new HashMap<>();
 
     public QueryNode() {
     }
 
     /**
      * Creates a node form all possible variables
-     * @param negate negate
+     *
+     * @param negate   negate
      * @param operator operator
-     * @param term term
+     * @param term     term
      * @param children children
      */
     public QueryNode(boolean negate, LogicalOperator operator, Term term, List<QueryNode> children) {
@@ -54,6 +55,7 @@ public class QueryNode {
 
     /**
      * Creates a new leaf node from a term
+     *
      * @param term term
      */
     public QueryNode(Term term) {
@@ -62,6 +64,7 @@ public class QueryNode {
 
     /**
      * Creates a new node from an operator and a list of children
+     *
      * @param operator operator
      * @param children children
      */
@@ -71,6 +74,7 @@ public class QueryNode {
 
     /**
      * Returns the attributes map
+     *
      * @return attributes map
      */
     public Map<String, Object> getAttributes() {
@@ -79,21 +83,23 @@ public class QueryNode {
 
     /**
      * Returns an attribute value or null if no attribute with the specified name is found.
+     *
      * @param name attribute name
      * @return value
      */
-    public Object getAttribute(String name){
+    public Object getAttribute(String name) {
         return attributes.get(name);
     }
 
     /**
      * Sets the value of an attribute. Returns the previously set value or null
-     * @param name attribute name
+     *
+     * @param name  attribute name
      * @param value attribute value
      * @return previous value or null
      */
-    public Object setAttribute(String name, Object value){
-        return attributes.put(name,value);
+    public Object setAttribute(String name, Object value) {
+        return attributes.put(name, value);
     }
     /**
      * Creates a new leaf node from a term
@@ -102,6 +108,7 @@ public class QueryNode {
 
     /**
      * Returns <tt>true</tt> if this node is negated
+     *
      * @return true if negated
      */
     public boolean isNegate() {
@@ -111,6 +118,7 @@ public class QueryNode {
 
     /**
      * Negates this node
+     *
      * @param negate negate
      */
     public void setNegate(boolean negate) {
@@ -119,6 +127,7 @@ public class QueryNode {
 
     /**
      * Returns the operator {@link LogicalOperator} of this node
+     *
      * @return operator
      */
     public LogicalOperator getOperator() {
@@ -127,6 +136,7 @@ public class QueryNode {
 
     /**
      * Sets the operator {@link LogicalOperator} of this node
+     *
      * @param operator oprator
      */
     public void setOperator(LogicalOperator operator) {
@@ -136,6 +146,7 @@ public class QueryNode {
 
     /**
      * Returns the term {@link Term} for this node
+     *
      * @return term
      */
     public Term getTerm() {
@@ -145,6 +156,7 @@ public class QueryNode {
 
     /**
      * Sets the term {@link Term} for this node
+     *
      * @param term term
      */
     public void setTerm(Term term) {
@@ -154,6 +166,7 @@ public class QueryNode {
 
     /**
      * Returns all child nodes
+     *
      * @return all child nodes
      */
     public List<QueryNode> getChildren() {
@@ -163,6 +176,7 @@ public class QueryNode {
 
     /**
      * Sets the child nodes
+     *
      * @param children child nodes
      */
     public void setChildren(List<QueryNode> children) {
@@ -171,10 +185,11 @@ public class QueryNode {
 
     /**
      * Returns the label (in the query tree) for this node.
+     *
      * @return label of the node
      */
     public String getLabel() {
-        if(term == null){
+        if (term == null) {
             return operator.getName();
         }
         return term.toString();

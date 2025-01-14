@@ -37,7 +37,8 @@ public class ParserUtil {
      * Contains all parsers assigned for different target types
      */
     private final static Map<Class<?>, Parser<?>> parserMap = new ConcurrentHashMap<>();
-    static{
+
+    static {
         init();
     }
 
@@ -91,16 +92,19 @@ public class ParserUtil {
             public Boolean parse(String s) throws ParseException {
                 if (s == null || !(
                         "false".equals((s = s.toLowerCase()))
-                                || "true".equals(s)
-                                || "f".equals(s)
-                                || "t".equals(s)
+                        || "true".equals(s)
+                        || "f".equals(s)
+                        || "t".equals(s)
                 )) {
                     throw new ParseException(String.format("illegal boolean value: %s", s), 0);
                 }
-                switch (s){
-                    case "f":return false;
-                    case "t":return true;
-                    default: return Boolean.parseBoolean(s);
+                switch (s) {
+                    case "f":
+                        return false;
+                    case "t":
+                        return true;
+                    default:
+                        return Boolean.parseBoolean(s);
                 }
             }
         });

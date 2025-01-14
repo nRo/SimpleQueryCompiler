@@ -24,10 +24,7 @@
 
 package de.alexgruen.query.compiler;
 
-import de.alexgruen.query.DefaultCreator;
-import de.alexgruen.query.LogicalOperator;
-import de.alexgruen.query.LogicalOperators;
-import de.alexgruen.query.Query;
+import de.alexgruen.query.*;
 import de.alexgruen.query.creator.LogicCreator;
 import de.alexgruen.query.creator.OperatorCreatorMap;
 import de.alexgruen.query.creator.TermCreator;
@@ -40,10 +37,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QueryCompilerBuilder<T extends Query> {
-    private OperatorCreatorMap<TermOperator, TermCreator<T>> termCreators = new OperatorCreatorMap<>();
-    private OperatorCreatorMap<LogicalOperator, LogicCreator<T>> logicCreators = new OperatorCreatorMap<>();
-    private Class<T> cl;
-    private List<QueryOptimization> optimizations = new ArrayList<>();
+    private final OperatorCreatorMap<TermOperator, TermCreator<T>> termCreators = new OperatorCreatorMap<>();
+    private final OperatorCreatorMap<LogicalOperator, LogicCreator<T>> logicCreators = new OperatorCreatorMap<>();
+    private final Class<T> cl;
+    private final List<QueryOptimization> optimizations = new ArrayList<>();
     private TermCreator<T> emptyCreator;
 
     private QueryCompilerBuilder(Class<T> cl) {
@@ -62,33 +59,33 @@ public class QueryCompilerBuilder<T extends Query> {
     }
 
     /**
-     * Create a new {@link QueryCompilerBuilder} for a specified query type using a {@link DefaultCreator}.
-     * All default logic and term operations can be defined using the {@link DefaultCreator}.
+     * Create a new {@link QueryCompilerBuilder} for a specified query type using a {@link QueryCreator}.
+     * All default logic and term operations can be defined using the {@link QueryCreator}.
      *
      * @param cl             query class
-     * @param defaultCreator default creator
+     * @param queryCreator default creator
      * @param <T>            query type
      * @return query compiler builder
      */
-    public static <T extends Query> QueryCompilerBuilder<T> createDefault(Class<T> cl, DefaultCreator<T> defaultCreator) {
+    public static <T extends Query> QueryCompilerBuilder<T> createDefault(Class<T> cl, QueryCreator<T> queryCreator) {
         QueryCompilerBuilder<T> queryCompilerBuilder = create(cl);
-        queryCompilerBuilder.withDefaultCreator(defaultCreator);
+        queryCompilerBuilder.withQueryCreator(queryCreator);
         queryCompilerBuilder.withOptimization(new RemoveRedundantBrackets());
         return queryCompilerBuilder;
     }
 
     /**
-     * Use a {@link DefaultCreator} to define all default logic and term operations
+     * Use a {@link QueryCreator} to define all default logic and term operations
      *
      * @param dc default creator
      * @return <tt>self</tt> for method chaining
      */
-    public QueryCompilerBuilder<T> withDefaultCreator(DefaultCreator<T> dc) {
-        withANDCreator((dc::and));
-        withORCreator((dc::or));
-        withXORCreator((dc::xor));
-        withNORCreator((dc::nor));
-        withNOTCreator((node, children) -> dc.not(children[0]));
+    public QueryCompilerBuilder<T> withQueryCreator(QueryCreator<T> dc) {
+        withANDCreator(dc::and);
+        withORCreator(dc::or);
+        withXORCreator(dc::xor);
+        withNORCreator(dc::nor);
+        withNOTCreator((node, children) -> dc.not(node, children[0]));
         withTermCreator(TermOperators.EQ, dc::eq);
         withTermCreator(TermOperators.NE, dc::ne);
         withTermCreator(TermOperators.LT, dc::lt);
@@ -97,6 +94,8 @@ public class QueryCompilerBuilder<T extends Query> {
         withTermCreator(TermOperators.GE, dc::ge);
         withTermCreator(TermOperators.REGEX, dc::regex);
         withTermCreator(TermOperators.TEXT, dc::text);
+        withTermCreator(TermOperators.IN, dc::in);
+        withTermCreator(TermOperators.NOT_IN, dc::notIn);
         withTermCreator(TermOperators.FULL_TEXT, (n, f, v) -> dc.fullSearch(v));
         withEmptyCreator((n, f, v) -> dc.empty());
         return this;

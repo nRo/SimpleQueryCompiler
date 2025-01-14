@@ -28,7 +28,7 @@ package de.alexgruen.query;
 public class QueryTree {
     private QueryNode root;
 
-    public QueryTree(QueryNode root){
+    public QueryTree(QueryNode root) {
         this.root = root;
     }
 

@@ -32,17 +32,18 @@ import java.util.Objects;
  */
 public class Operator {
     //Name of the operator
-    private String name;
+    private final String name;
 
     //Aliases of the operator
-    private String[] aliases;
+    private final String[] aliases;
 
     /**
      * Creates an operator from a name and array of aliases
-     * @param name operator name
+     *
+     * @param name    operator name
      * @param aliases operator aliases
      */
-    public Operator(String name, String... aliases){
+    public Operator(String name, String... aliases) {
         this.name = name;
         this.aliases = aliases;
     }
@@ -50,6 +51,7 @@ public class Operator {
 
     /**
      * Returns the aliases
+     *
      * @return aliases
      */
     public String[] getAliases() {
@@ -58,6 +60,7 @@ public class Operator {
 
     /**
      * Returns the name
+     *
      * @return name
      */
     public String getName() {
@@ -66,7 +69,8 @@ public class Operator {
 
     /**
      * True if o equals this operator
-     * @param o other operator
+     *
+     * @param o another operator
      * @return true if equal
      */
     @Override
@@ -75,11 +79,12 @@ public class Operator {
         if (o == null || getClass() != o.getClass()) return false;
         Operator operator = (Operator) o;
         return Objects.equals(name, operator.name) &&
-                Arrays.equals(aliases, operator.aliases);
+               Arrays.equals(aliases, operator.aliases);
     }
 
     /**
      * Calculates the hashcode of this operator object
+     *
      * @return hashcode
      */
     @Override

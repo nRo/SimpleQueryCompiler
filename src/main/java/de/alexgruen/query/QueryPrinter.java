@@ -39,29 +39,30 @@ public class QueryPrinter {
     private String labelPrefix = "";
     private String labelPostfix = "";
     private String lineSeparator = "\n";
-    private Function<String,String> indentFunction;
-    private QueryPrinter(){
+    private Function<String, String> indentFunction;
+
+    private QueryPrinter() {
 
     }
 
-    public static QueryPrinter.Builder create(){
+    public static QueryPrinter.Builder create() {
         return Builder.create();
     }
 
     public String toString(QueryNode root) {
         StringBuilder sb = new StringBuilder();
-        printRec("",true,root,sb,false);
+        printRec("", true, root, sb, false);
         return sb.toString();
     }
 
-    private void printRec(String prefix,boolean isRoot, QueryNode node, StringBuilder sb, boolean lastChild){
+    private void printRec(String prefix, boolean isRoot, QueryNode node, StringBuilder sb, boolean lastChild) {
         StringBuilder nodeLine = new StringBuilder();
-        if(!isRoot){
+        if (!isRoot) {
             nodeLine.append(lastChild ? cornerLast : tLine);
         }
 
         nodeLine.append(horizontalLine);
-        if(!node.getChildren().isEmpty()){
+        if (!node.getChildren().isEmpty()) {
             nodeLine.append(cornerNext);
         }
         nodeLine.append(" ");
@@ -72,29 +73,28 @@ public class QueryPrinter {
         sb.append(prefix);
         sb.append(nodeLine);
         sb.append(lineSeparator);
-        String verticalConnection = String.format("%s%s",verticalLine,
+        String verticalConnection = String.format("%s%s", verticalLine,
                 StringUtil.repeatChar(
-                        cornerNext.length()+horizontalLine.length()-verticalLine.length(), ' '
+                        cornerNext.length() + horizontalLine.length() - verticalLine.length(), ' '
                 ));
         int i = 0;
-        for(QueryNode child : node.getChildren()){
-            printRec(prefix + (lastChild || isRoot ? indentation : verticalConnection), false,child,sb, i++ == node.getChildren().size() - 1);
+        for (QueryNode child : node.getChildren()) {
+            printRec(prefix + (lastChild || isRoot ? indentation : verticalConnection), false, child, sb, i++ == node.getChildren().size() - 1);
         }
 
     }
 
 
-
     public static final class Builder {
-        private String horizontalLine   = "──";
-        private String verticalLine     = "│";
-        private String tLine            = "├";
+        private String horizontalLine = "──";
+        private String verticalLine = "│";
+        private String tLine = "├";
         private String cornerLast = "└";
         private String cornerNext = "┐";
         private String labelPrefix = "";
         private String labelPostfix = "";
         private String lineSeparator = "\n";
-        private Function<String,String> indentFunction = (l) -> StringUtil.repeatChar(l.length() - 2,' ');
+        private Function<String, String> indentFunction = (l) -> StringUtil.repeatChar(l.length() - 2, ' ');
 
         private Builder() {
         }
@@ -122,14 +122,17 @@ public class QueryPrinter {
             this.cornerNext = cornerNext;
             return this;
         }
+
         public Builder withCornerLast(String cornerLast) {
             this.cornerLast = cornerLast;
             return this;
         }
-        public Builder witIndentFunction(Function<String,String> indentFunction) {
+
+        public Builder witIndentFunction(Function<String, String> indentFunction) {
             this.indentFunction = indentFunction;
             return this;
         }
+
         public Builder withLabelPrefix(String labelPrefix) {
             this.labelPrefix = labelPrefix;
             return this;
@@ -144,7 +147,6 @@ public class QueryPrinter {
             this.lineSeparator = lineSeparator;
             return this;
         }
-
 
 
         public QueryPrinter build() {
