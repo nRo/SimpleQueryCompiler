@@ -35,40 +35,19 @@ import java.util.List;
 
 public class QueryCompiler<T extends Query> {
 
-    private QueryContext<T> context;
-    private List<QueryOptimization> optimizations;
-    private QueryTreeCompiler queryTreeCompiler;
+    private final QueryContext<T> context;
+    private final List<QueryOptimization> optimizations;
+    private final QueryTreeCompiler<T> queryTreeCompiler;
 
     protected QueryCompiler(QueryContext<T> context, List<QueryOptimization> optimizations) {
         this.context = context;
         this.optimizations = optimizations;
-        this.queryTreeCompiler = new QueryTreeCompiler(context);
-    }
-
-    /**
-     * Create a new {@link QueryCompilerBuilder}
-     * @param cl target class
-     * @param <T> target type
-     * @return query compiler instance
-     */
-    public static <T extends Query> QueryCompilerBuilder<T> create(Class<T> cl) {
-        return QueryCompilerBuilder.create(cl);
-    }
-
-
-    /**
-     * Create a new {@link QueryCompilerBuilder} using a {@link DefaultCreator}.
-     * @param cl target class
-     * @param defaultCreator default operation creator
-     * @param <T> target type
-     * @return query compiler instance
-     */
-    public static <T extends Query> QueryCompilerBuilder<T> createDefault(Class<T> cl, DefaultCreator<T> defaultCreator) {
-        return QueryCompilerBuilder.createDefault(cl, defaultCreator);
+        this.queryTreeCompiler = new QueryTreeCompiler<>(context);
     }
 
     /**
      * Returns the {@link QueryContext}
+     *
      * @return context
      */
     public QueryContext<T> getContext() {
@@ -77,6 +56,7 @@ public class QueryCompiler<T extends Query> {
 
     /**
      * Returns all assigned optimizations ({@link QueryOptimization}
+     *
      * @return optimizations
      */
     public List<QueryOptimization> getOptimizations() {
@@ -85,6 +65,7 @@ public class QueryCompiler<T extends Query> {
 
     /**
      * Compiles an input string to the target class
+     *
      * @param str input string
      * @return object of target class
      */
@@ -95,6 +76,7 @@ public class QueryCompiler<T extends Query> {
 
     /**
      * Compiles an input string to a query tree ({@link QueryTree}
+     *
      * @param str input string
      * @return query tree
      */
@@ -107,6 +89,7 @@ public class QueryCompiler<T extends Query> {
 
     /**
      * Converts a query tree to the target class
+     *
      * @param tree input query tree
      * @return object of target class
      */
@@ -116,15 +99,16 @@ public class QueryCompiler<T extends Query> {
 
     /**
      * Recursive function for converting query trees to target objects
+     *
      * @param node current node
      * @return target object
      */
     private T compileTreeRec(QueryNode node) {
-        if(node.getChildren().isEmpty() && node.getTerm() == null){
-            if(context.getEmptyCreator() == null){
+        if (node.getChildren().isEmpty() && node.getTerm() == null) {
+            if (context.getEmptyCreator() == null) {
                 throw new QueryCompilerException("no empty creator defined");
             }
-            return context.getEmptyCreator().create(node,null,null);
+            return context.getEmptyCreator().create(node, null, null);
         }
         //return if node contains term
         if (node.getTerm() != null) {
@@ -136,7 +120,7 @@ public class QueryCompiler<T extends Query> {
             return t;
         }
 
-        //Create array for results of child terms
+        //Create an array for results of child terms
         T[] terms = CompilerUtil.createArray(context.getCl(), node.getChildren().size());
 
         //recursive calculation of child terms
@@ -144,7 +128,7 @@ public class QueryCompiler<T extends Query> {
             terms[i] = compileTreeRec(node.getChildren().get(i));
         }
 
-        //Create new term using child terms and logical operation
+        //Create a new term using child terms and logical operation
         LogicCreator<T> logicCreator = context.getLogicCreator(node.getOperator());
         T t = logicCreator.create(node, terms);
         if (node.isNegate()) {
@@ -154,7 +138,8 @@ public class QueryCompiler<T extends Query> {
     }
 
     /**
-     * Use {@link LogicCreator} to negate target object
+     * Use {@link LogicCreator} to negate a target object
+     *
      * @param t input object
      * @return negated object
      */
@@ -165,7 +150,8 @@ public class QueryCompiler<T extends Query> {
     }
 
     /**
-     * Create object of target class for a term using the creator ({@link TermCreator}) specified in the {@link QueryContext}
+     * Create an object of target class for a term using the creator ({@link TermCreator}) specified in the {@link QueryContext}
+     *
      * @param term input term
      * @return object of target class
      */
@@ -176,7 +162,6 @@ public class QueryCompiler<T extends Query> {
 
     /**
      * Apply all optimizations ({@link QueryOptimization}) specified in the {@link QueryContext} to a {@link QueryTree}
-     * @param tree
      */
     private void optimize(QueryTree tree) {
         for (QueryOptimization optimization : optimizations) {

@@ -26,7 +26,7 @@ package de.alexgruen.query.compiler;
 
 /**
  * Created by Alex on 21.05.2017.
- *
+ * <p>
  * Exception that is thrown if an error occurs during query compilation
  */
 

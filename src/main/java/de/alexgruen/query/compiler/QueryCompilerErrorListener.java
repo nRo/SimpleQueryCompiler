@@ -34,7 +34,7 @@ import org.antlr.v4.runtime.Recognizer;
  */
 public class QueryCompilerErrorListener extends BaseErrorListener {
     //Query String that lead to an error
-    private String queryString;
+    private final String queryString;
 
     public QueryCompilerErrorListener(String queryString) {
         this.queryString = queryString;
@@ -43,12 +43,13 @@ public class QueryCompilerErrorListener extends BaseErrorListener {
     /**
      * Listener method that gets evoked if an error occurs during query compilation.
      * This method throws {@link QueryCompilerException} if called by the compiler
-     * @param recognizer recognizer
-     * @param offendingSymbol offending symbol
-     * @param line line in input string
-     * @param charPositionInLine char position in input line
-     * @param msg error message
-     * @param e exception
+     *
+     * @param recognizer         recognizer
+     * @param offendingSymbol    offending symbol
+     * @param line               line in input string
+     * @param charPositionInLine char position in the input line
+     * @param msg                error message
+     * @param e                  exception
      */
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
@@ -57,6 +58,7 @@ public class QueryCompilerErrorListener extends BaseErrorListener {
 
     /**
      * Returns the query string that caused an error during compilation
+     *
      * @return
      */
     public String getQueryString() {

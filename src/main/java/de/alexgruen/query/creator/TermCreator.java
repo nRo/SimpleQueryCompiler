@@ -31,7 +31,8 @@ import de.alexgruen.query.term.Value;
 public interface TermCreator<T> extends OperatorCreator {
     /**
      * Crates a Query of the desired type from a {@link Field} and {@link Value}
-     * @param node query node
+     *
+     * @param node  query node
      * @param field input field
      * @param value input value
      * @return query

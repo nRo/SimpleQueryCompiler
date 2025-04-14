@@ -34,9 +34,10 @@ public class Term {
 
     /**
      * Creates a new term object from a field, operator and value
-     * @param field field
+     *
+     * @param field        field
      * @param termOperator operator
-     * @param value value
+     * @param value        value
      */
     public Term(Field field, TermOperator termOperator, Value value) {
         this.field = field;
@@ -46,6 +47,7 @@ public class Term {
 
     /**
      * Returns the field from this term
+     *
      * @return field
      */
     public Field getField() {
@@ -54,6 +56,7 @@ public class Term {
 
     /**
      * Sets the field ({@link Field}
+     *
      * @param field field
      */
     public void setField(Field field) {
@@ -62,6 +65,7 @@ public class Term {
 
     /**
      * Returns the operator ({@link TermOperator} from this term
+     *
      * @return operator
      */
     public TermOperator getOperator() {
@@ -70,6 +74,7 @@ public class Term {
 
     /**
      * Sets the operator
+     *
      * @param operator
      */
     public void setOperator(TermOperator operator) {
@@ -78,6 +83,7 @@ public class Term {
 
     /**
      * Returns the value ({@link Value} from this term
+     *
      * @return value
      */
     public Value getValue() {
@@ -86,6 +92,7 @@ public class Term {
 
     /**
      * Sets the value
+     *
      * @param value value
      */
     public void setValue(Value value) {
@@ -94,6 +101,7 @@ public class Term {
 
     /**
      * Returns a string representation of this term (field operation value)
+     *
      * @return
      */
     @Override

@@ -39,9 +39,9 @@ import de.alexgruen.query.util.CompilerUtil;
  */
 public class TermVisitor extends QueryBaseVisitor<QueryNode> {
 
-    private QueryContext context;
+    private final QueryContext<?> context;
 
-    public TermVisitor(QueryContext context) {
+    public TermVisitor(QueryContext<?> context) {
         this.context = context;
     }
 
@@ -49,14 +49,18 @@ public class TermVisitor extends QueryBaseVisitor<QueryNode> {
     /**
      * Creates a query node from a term context.
      * Term query nodes represent the leafs in the query tree
+     *
      * @param ctx term context
      * @return query node
      */
     @Override
     public QueryNode visitTerm(QueryParser.TermContext ctx) {
         QueryNode queryNode;
-        if (ctx.regex_term() != null) {
-            //use regex visitor if necessary
+        if(ctx.value_list() != null) {
+            queryNode = createFieldListFilterNode(ctx);
+        }
+        else if (ctx.regex_term() != null) {
+            //use a regex visitor if necessary
             RegexTermVisitor regexTermVisitor = new RegexTermVisitor();
             queryNode = regexTermVisitor.visitRegex_term(ctx.regex_term());
         } else {
@@ -70,6 +74,7 @@ public class TermVisitor extends QueryBaseVisitor<QueryNode> {
 
     /**
      * Creates a query node from a single term (field OPERATOR value)
+     *
      * @param ctx term context
      * @return query node
      */
@@ -81,9 +86,23 @@ public class TermVisitor extends QueryBaseVisitor<QueryNode> {
     }
 
     /**
+     * Creates a query node from a single term (field OPERATOR value)
+     *
+     * @param ctx term context
+     * @return query node
+     */
+    private QueryNode createFieldListFilterNode(QueryParser.TermContext ctx) {
+        Field field = CompilerUtil.createField(ctx.variable());
+        String operation = ctx.term_list_operation().getText();
+        Value value = CompilerUtil.createListValue(ctx.value_list());
+        return createFieldFilterNode(field, value, operation);
+    }
+
+    /**
      * Creates a query node from a {@link Field}, operator and {@link Value}
-     * @param field term field
-     * @param value term value
+     *
+     * @param field     term field
+     * @param value     term value
      * @param operation term operator
      * @return query node
      */
@@ -94,6 +113,4 @@ public class TermVisitor extends QueryBaseVisitor<QueryNode> {
         }
         return new QueryNode(new Term(field, termOperator, value));
     }
-
-
 }

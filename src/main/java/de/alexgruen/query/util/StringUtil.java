@@ -38,25 +38,23 @@ public class StringUtil {
     }
 
 
-    private static Pattern NUMBER_PATTERN = Pattern.compile("[0-9]+([\\.,][0-9]+)?");
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("\\d+([.,]\\d+)?");
 
     /**
      * Creates a string by repeating a specified char
-     * @param length length of resulting string
+     *
+     * @param length     length of resulting string
      * @param indentChar input char
      * @return result string
      */
-    public static String repeatChar(int length, char indentChar){
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < length; i++){
-            sb.append(indentChar);
-        }
-        return sb.toString();
+    public static String repeatChar(int length, char indentChar) {
+        return String.valueOf(indentChar).repeat(Math.max(0, length));
     }
 
     /**
      * Returns parsed Number if the input string is a valid number representation.
-     * If the string can not be parsed null is returned.
+     * If the string cannot be parsed, null is returned.
+     *
      * @param value input string
      * @return parsed number or null
      */
@@ -76,6 +74,7 @@ public class StringUtil {
 
     /**
      * Returns true if the input string is a valid number representation
+     *
      * @param value input string
      * @return true if number
      */
@@ -86,16 +85,18 @@ public class StringUtil {
 
     /**
      * Returns true if the string is quoted ("string" or 'string')
+     *
      * @param val input string
      * @return true if quoted
      */
     public static boolean isQuoted(String val) {
         return (val.startsWith("'") && val.endsWith("'"))
-                || (val.startsWith("\"") && val.endsWith("\""));
+               || (val.startsWith("\"") && val.endsWith("\""));
     }
 
     /**
      * Removes quotes from a string ("string" -> string)
+     *
      * @param val input string
      * @return string without quotes
      */
@@ -114,16 +115,17 @@ public class StringUtil {
     /**
      * Returns true if a string value requires quotation.
      * "val 1" -> true, "val1" -> false
+     *
      * @param value input string
      * @return true if quotation is required
      */
     public static boolean requiresQuotation(String value) {
         return !isQuoted(value) &&
-                (
-                        value.contains(" ") ||
-                        value.contains("\t") ||
-                        value.contains("\n")
-                );
+               (
+                       value.contains(" ") ||
+                       value.contains("\t") ||
+                       value.contains("\n")
+               );
     }
 
     /**
@@ -146,7 +148,7 @@ public class StringUtil {
      *
      * @param input input string
      * @param split char used to split
-     * @return string array containing all splitted parts
+     * @return string array containing all split parts
      */
     public static String[] splitQuoted(String input, Character split) {
         List<String> parts = new ArrayList<>();
@@ -157,7 +159,7 @@ public class StringUtil {
 
 
     /**
-     * Split an input string at a specified split-character  into several parts.
+     * Split an input string at a specified split-character into several parts.
      * <tt>"</tt> and <tt>'</tt> are considered during the process.
      * <p><code>"testA    testB   testB" -&gt; [testA,testB,testC]</code></p>
      * <p><code>"'testA    testB'   testB" -&gt; [testA    testB,testC]</code></p>
@@ -166,9 +168,9 @@ public class StringUtil {
      * @param split char used to split
      * @param parts list filled with the resulting parts
      */
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings({"ConstantConditions", "java:S3776", "java:S135"})
     public static void splitQuoted(String input, Character split, List<String> parts) {
-        if (input.length() == 0) {
+        if (input.isEmpty()) {
             return;
         }
         boolean inQuotation = false;
@@ -199,7 +201,7 @@ public class StringUtil {
             } else if (c == '\"') {
                 if (inDoubleQuotation) {
                     inDoubleQuotation = false;
-                } else if (!inDoubleQuotation && startOrSplit) {
+                } else if (startOrSplit) {
                     inDoubleQuotation = true;
                     startOrSplit = false;
                 } else {

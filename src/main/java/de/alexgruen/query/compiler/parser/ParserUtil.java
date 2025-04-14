@@ -33,11 +33,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by Alex on 04.06.2015.
  */
 public class ParserUtil {
+    private ParserUtil() {
+        throw new IllegalStateException("utility class");
+    }
+
     /**
      * Contains all parsers assigned for different target types
      */
-    private final static Map<Class<?>, Parser<?>> parserMap = new ConcurrentHashMap<>();
-    static{
+    private static final Map<Class<?>, Parser<?>> parserMap = new ConcurrentHashMap<>();
+
+    static {
         init();
     }
 
@@ -89,19 +94,23 @@ public class ParserUtil {
         parserMap.put(Boolean.class, new Parser<Boolean>() {
             @Override
             public Boolean parse(String s) throws ParseException {
-                if (s == null || !(
-                        "false".equals((s = s.toLowerCase()))
-                                || "true".equals(s)
-                                || "f".equals(s)
-                                || "t".equals(s)
+                if(s == null){
+                    throw new ParseException("illegal boolean value: null", 0);
+                }
+                s = s.toLowerCase();
+                if (!(
+                        "false".equals(s)
+                        || "true".equals(s)
+                        || "f".equals(s)
+                        || "t".equals(s)
                 )) {
                     throw new ParseException(String.format("illegal boolean value: %s", s), 0);
                 }
-                switch (s){
-                    case "f":return false;
-                    case "t":return true;
-                    default: return Boolean.parseBoolean(s);
-                }
+                return switch (s) {
+                    case "f" -> false;
+                    case "t" -> true;
+                    default -> Boolean.parseBoolean(s);
+                };
             }
         });
 
@@ -139,8 +148,8 @@ public class ParserUtil {
      * @throws ParseException thrown if the string can not be parsed
      */
     private static <T> T parseArray(Class<T> cl, String x) throws ParseException {
-        Parser p = getParserMap().get(cl.getComponentType());
-        Class cc = cl.getComponentType();
+        Parser<?> p = getParserMap().get(cl.getComponentType());
+        Class<?> cc = cl.getComponentType();
         String[] vals = x.split("[;,|]");
         Object r = Array.newInstance(cc, vals.length);
         for (int i = 0; i < vals.length; i++) {
@@ -197,7 +206,7 @@ public class ParserUtil {
      */
     @SuppressWarnings("unchecked")
     public static <T> Parser<T> getParser(Class<T> cl) throws ParserNotFoundException {
-        Parser parser = getParserMap().get(cl);
+        Parser<?> parser = getParserMap().get(cl);
         if (parser == null) {
             throw new ParserNotFoundException(cl);
         }
@@ -214,7 +223,8 @@ public class ParserUtil {
     public static <T> Parser<T> findParserOrNull(Class<T> cl) {
         try {
             return getParser(cl);
-        } catch (ParserNotFoundException e) {
+        } catch (ParserNotFoundException ignored) {
+            // ignore errors
         }
         return null;
     }

@@ -39,25 +39,26 @@ import org.antlr.v4.runtime.ConsoleErrorListener;
 /**
  * Created by Alex on 18.05.2017.
  */
-public class QueryTreeCompiler {
+public class QueryTreeCompiler<T extends Query> {
 
-    private QueryContext<? extends Query> context;
+    private final QueryContext<T> context;
 
-    public QueryTreeCompiler(QueryContext context) {
+    public QueryTreeCompiler(QueryContext<T> context) {
         this.context = context;
     }
 
     /**
      * Compiles an input query string into a {@link QueryTree}.
      * A {@link QueryCompilerException} is thrown if an error occurs.
+     *
      * @param queryString input string
      * @return resulting query tree
      */
     public QueryTree compile(String queryString) {
         if (context == null) {
-            throw new RuntimeException("context required");
+            throw new QueryCompilerException("context required");
         }
-       
+
         queryString = queryString.trim();
         //return "empty" query tree if input string is empty
         if (queryString.isEmpty()) {
