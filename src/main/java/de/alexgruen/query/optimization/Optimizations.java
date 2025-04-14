@@ -25,8 +25,12 @@
 package de.alexgruen.query.optimization;
 
 public class Optimizations {
+    private Optimizations() {
+        throw new IllegalStateException("utility class");
+    }
+
     /**
      * Removes redundant brackets from a query tree.
      */
-    public final static QueryOptimization RemoveRedundantBrackets = new RemoveRedundantBrackets();
+    public static final QueryOptimization RemoveRedundantBrackets = new RemoveRedundantBrackets();
 }

@@ -1,17 +1,16 @@
-package de.alexgruen.querycompiler;
+package de.alexgruen.query.creator;
 
 import de.alexgruen.query.PrintQuery;
 import de.alexgruen.query.QueryNode;
-import de.alexgruen.query.creator.TermCreator;
 import de.alexgruen.query.term.Field;
 import de.alexgruen.query.term.Value;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class TermCreatorTest {
+class TermCreatorTest {
 
     @Test
-    public void testTermCreator() {
+    void testTermCreator() {
         TermCreator<PrintQuery> termCreator = (node, field, value) -> new PrintQuery() {
             @Override
             public String toString() {
@@ -46,7 +45,7 @@ public class TermCreatorTest {
     }
 
     @Test
-    public void testTermCreatorWithLambda() {
+    void testTermCreatorWithLambda() {
         TermCreator<PrintQuery> termCreator = (node, field, value) -> new PrintQuery() {
             @Override
             public String toString() {
@@ -54,7 +53,7 @@ public class TermCreatorTest {
             }
         };
 
-        Field field = new Field("x", new String[]{"x"});
+        Field field = new Field("x", "x");
         Value value = new Value(123);
         PrintQuery query = termCreator.create(null, field, value);
 
@@ -63,12 +62,12 @@ public class TermCreatorTest {
     }
 
     @Test
-    public void testTermCreatorWithQueryNode() {
+    void testTermCreatorWithQueryNode() {
         TermCreator<PrintQuery> termCreator = (node, field, value) -> new PrintQuery() {
             @Override
             public String toString() {
-                return String.format("(%s %s %s)", field.getFullPath(), 
-                        node != null && node.isNegate() ? "!=" : "==", 
+                return String.format("(%s %s %s)", field.getFullPath(),
+                        node != null && node.isNegate() ? "!=" : "==",
                         value.toString());
             }
         };

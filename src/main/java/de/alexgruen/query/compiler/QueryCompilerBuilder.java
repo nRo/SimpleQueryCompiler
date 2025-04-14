@@ -198,7 +198,7 @@ public class QueryCompilerBuilder<T extends Query> {
      * @return query context
      */
     private QueryContext<T> createContext() {
-        return new QueryContext<T>(
+        return new QueryContext<>(
                 termCreators, logicCreators, emptyCreator, cl
         );
     }
@@ -211,5 +211,4 @@ public class QueryCompilerBuilder<T extends Query> {
     public QueryCompiler<T> build() {
         return new QueryCompiler<>(createContext(), optimizations);
     }
-
 }

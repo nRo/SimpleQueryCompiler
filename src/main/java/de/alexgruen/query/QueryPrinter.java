@@ -27,10 +27,9 @@ package de.alexgruen.query;
 import de.alexgruen.query.util.StringUtil;
 
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 public class QueryPrinter {
-    public static final QueryPrinter DEFAULT = QueryPrinter.create().build();
-
     private String horizontalLine = "──";
     private String verticalLine = "│";
     private String tLine = "├";
@@ -94,7 +93,7 @@ public class QueryPrinter {
         private String labelPrefix = "";
         private String labelPostfix = "";
         private String lineSeparator = "\n";
-        private Function<String, String> indentFunction = (l) -> StringUtil.repeatChar(l.length() - 2, ' ');
+        private UnaryOperator<String> indentFunction = l -> StringUtil.repeatChar(l.length() - 2, ' ');
 
         private Builder() {
         }
@@ -128,7 +127,7 @@ public class QueryPrinter {
             return this;
         }
 
-        public Builder witIndentFunction(Function<String, String> indentFunction) {
+        public Builder witIndentFunction(UnaryOperator<String> indentFunction) {
             this.indentFunction = indentFunction;
             return this;
         }

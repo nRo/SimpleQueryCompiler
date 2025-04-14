@@ -1,26 +1,24 @@
-package de.alexgruen.querycompiler;
+package de.alexgruen.query.compiler;
 
-import de.alexgruen.query.*;
-import de.alexgruen.query.compiler.QueryCompiler;
-import de.alexgruen.query.compiler.QueryCompilerBuilder;
-import de.alexgruen.query.compiler.QueryContext;
+import de.alexgruen.query.LogicalOperators;
+import de.alexgruen.query.PrintQuery;
+import de.alexgruen.query.PrintQueryCreator;
 import de.alexgruen.query.creator.LogicCreator;
 import de.alexgruen.query.creator.TermCreator;
 import de.alexgruen.query.optimization.QueryOptimization;
 import de.alexgruen.query.optimization.RemoveRedundantBrackets;
-import de.alexgruen.query.term.Field;
 import de.alexgruen.query.term.TermOperator;
 import de.alexgruen.query.term.TermOperators;
-import de.alexgruen.query.term.Value;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class QueryCompilerBuilderTest {
+@SuppressWarnings("unchecked")
+class QueryCompilerBuilderTest {
 
     @Test
-    public void testCreate() {
+    void testCreate() {
         QueryCompilerBuilder<PrintQuery> builder = QueryCompilerBuilder.create(PrintQuery.class);
         Assertions.assertNotNull(builder);
 
@@ -29,7 +27,7 @@ public class QueryCompilerBuilderTest {
     }
 
     @Test
-    public void testCreateDefault() {
+    void testCreateDefault() {
         PrintQueryCreator creator = new PrintQueryCreator();
         QueryCompilerBuilder<PrintQuery> builder = QueryCompilerBuilder.createDefault(PrintQuery.class, creator);
         Assertions.assertNotNull(builder);
@@ -43,14 +41,14 @@ public class QueryCompilerBuilderTest {
             List<QueryOptimization> optimizations = (List<QueryOptimization>) optimizationsField.get(compiler);
 
             Assertions.assertEquals(1, optimizations.size());
-            Assertions.assertTrue(optimizations.get(0) instanceof RemoveRedundantBrackets);
+            Assertions.assertInstanceOf(RemoveRedundantBrackets.class, optimizations.getFirst());
         } catch (Exception e) {
             Assertions.fail("Failed to access optimizations field: " + e.getMessage());
         }
     }
 
     @Test
-    public void testWithQueryCreator() {
+    void testWithQueryCreator() {
         PrintQueryCreator creator = new PrintQueryCreator();
         QueryCompilerBuilder<PrintQuery> builder = QueryCompilerBuilder.create(PrintQuery.class)
                 .withQueryCreator(creator);
@@ -85,7 +83,7 @@ public class QueryCompilerBuilderTest {
     }
 
     @Test
-    public void testWithOptimization() {
+    void testWithOptimization() {
         QueryCompilerBuilder<PrintQuery> builder = QueryCompilerBuilder.create(PrintQuery.class)
                 .withOptimization(new RemoveRedundantBrackets());
 
@@ -96,14 +94,14 @@ public class QueryCompilerBuilderTest {
             List<QueryOptimization> optimizations = (List<QueryOptimization>) optimizationsField.get(compiler);
 
             Assertions.assertEquals(1, optimizations.size());
-            Assertions.assertTrue(optimizations.get(0) instanceof RemoveRedundantBrackets);
+            Assertions.assertInstanceOf(RemoveRedundantBrackets.class, optimizations.getFirst());
         } catch (Exception e) {
             Assertions.fail("Failed to access optimizations field: " + e.getMessage());
         }
     }
 
     @Test
-    public void testWithTermCreator() {
+    void testWithTermCreator() {
         TermCreator<PrintQuery> customCreator = (node, field, value) -> new PrintQuery() {
             @Override
             public String toString() {
@@ -127,7 +125,7 @@ public class QueryCompilerBuilderTest {
     }
 
     @Test
-    public void testWithEmptyCreator() {
+    void testWithEmptyCreator() {
         TermCreator<PrintQuery> emptyCreator = (node, field, value) -> new PrintQuery() {
             @Override
             public String toString() {
@@ -151,7 +149,7 @@ public class QueryCompilerBuilderTest {
     }
 
     @Test
-    public void testWithLogicCreators() {
+    void testWithLogicCreators() {
         LogicCreator<PrintQuery> andCreator = (node, children) -> new PrintQuery() {
             @Override
             public String toString() {

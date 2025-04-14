@@ -26,6 +26,8 @@ package de.alexgruen.query;
 
 
 public class QueryTree {
+    private static final QueryPrinter PRINTER = QueryPrinter.create().build();
+
     private QueryNode root;
 
     public QueryTree(QueryNode root) {
@@ -42,7 +44,7 @@ public class QueryTree {
 
     @Override
     public String toString() {
-        return QueryPrinter.DEFAULT.toString(root);
+        return PRINTER.toString(root);
     }
 
 }

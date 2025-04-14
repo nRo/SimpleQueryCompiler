@@ -27,6 +27,9 @@ package de.alexgruen.query.term;
 import java.util.*;
 
 public class TermOperators {
+    private TermOperators() {
+        throw new IllegalStateException("utility class");
+    }
     /**
      * Equals operator
      */

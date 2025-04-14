@@ -27,8 +27,6 @@ package de.alexgruen.query;
 import de.alexgruen.query.term.Field;
 import de.alexgruen.query.term.Value;
 
-import java.util.List;
-
 /**
  * Default creator for {@link PrintQuery}
  */

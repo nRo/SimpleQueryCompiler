@@ -34,9 +34,8 @@ import java.util.regex.Pattern;
  * Represents a value within a term (field operator value)
  */
 public class Value {
-    //Value types
     public enum Type {
-        Double, Long, String, Boolean, Pattern, Null, List
+        DOUBLE, LONG, STRING, BOOLEAN, PATTERN, NULL, LIST
     }
 
     private Object value;
@@ -97,7 +96,7 @@ public class Value {
      * @return true if number
      */
     public boolean isNumber() {
-        return type == Type.Double || type == Type.Long;
+        return type == Type.DOUBLE || type == Type.LONG;
     }
 
     /**
@@ -106,7 +105,7 @@ public class Value {
      * @return true if string
      */
     public boolean isString() {
-        return type == Type.String;
+        return type == Type.STRING;
     }
 
     /**
@@ -115,7 +114,7 @@ public class Value {
      * @return true if boolean
      */
     public boolean isBoolean() {
-        return type == Type.Boolean;
+        return type == Type.BOOLEAN;
     }
 
     /**
@@ -124,7 +123,7 @@ public class Value {
      * @return true if pattern
      */
     public boolean isPattern() {
-        return type == Type.Pattern;
+        return type == Type.PATTERN;
     }
 
     /**
@@ -133,7 +132,7 @@ public class Value {
      * @return true if pattern
      */
     public boolean isList() {
-        return type == Type.List;
+        return type == Type.LIST;
     }
 
     /**
@@ -142,7 +141,7 @@ public class Value {
      * @return double value
      */
     public Number getNumber() {
-        if (type == Type.Double || type == Type.Long) {
+        if (type == Type.DOUBLE || type == Type.LONG) {
             return (Number) value;
         }
         throw new QueryCompilerException(String.format("value is not available as number (%s)", type.name()));
@@ -154,10 +153,10 @@ public class Value {
      * @return double value
      */
     public Double getDouble() {
-        if (type == Type.Double) {
+        if (type == Type.DOUBLE) {
             return (Double) value;
         }
-        if (type == Type.Long) {
+        if (type == Type.LONG) {
             return ((Long) value).doubleValue();
         }
         throw new QueryCompilerException(String.format("value is not available as double (%s)", type.name()));
@@ -170,10 +169,10 @@ public class Value {
      * @return long value
      */
     public Long getLong() {
-        if (type == Type.Long) {
+        if (type == Type.LONG) {
             return (Long) value;
         }
-        if (type == Type.Double) {
+        if (type == Type.DOUBLE) {
             return ((Double) value).longValue();
         }
         throw new QueryCompilerException(String.format("value is not available as long (%s)", type.name()));
@@ -185,7 +184,7 @@ public class Value {
      * @return boolean value
      */
     public Boolean getBoolean() {
-        if (type == Type.Boolean) {
+        if (type == Type.BOOLEAN) {
             return (Boolean) value;
         }
 
@@ -198,7 +197,7 @@ public class Value {
      * @return Pattern value
      */
     public Pattern getPattern() {
-        if (type == Type.Pattern) {
+        if (type == Type.PATTERN) {
             return (Pattern) value;
         }
 
@@ -211,7 +210,7 @@ public class Value {
      * @return String value
      */
     public String getString() {
-        if (type == Type.Null) {
+        if (type == Type.NULL) {
             return null;
         }
         return value.toString();
@@ -224,7 +223,7 @@ public class Value {
      */
     @SuppressWarnings("unchecked")
     public List<Value> getList() {
-        if (type == Type.List) {
+        if (type == Type.LIST) {
             return (List<Value>) value;
         }
         throw new QueryCompilerException(String.format("value is not available as list (%s)", type.name()));
@@ -236,7 +235,7 @@ public class Value {
      */
     private void updateType() {
         if (value == null) {
-            type = Type.Null;
+            type = Type.NULL;
         }
         else if (value instanceof List) {
             ((List<?>) value).forEach((v -> {
@@ -244,24 +243,24 @@ public class Value {
                     throw new QueryCompilerException(String.format("unsupported list value type %s", v.getClass()));
                 }
             }));
-            type = Type.List;
+            type = Type.LIST;
         }
         else if (value instanceof Double) {
-            type = Type.Double;
+            type = Type.DOUBLE;
         } else if (value instanceof Long) {
-            type = Type.Long;
+            type = Type.LONG;
         } else if (value instanceof String) {
-            type = Type.String;
+            type = Type.STRING;
         } else if (value instanceof Boolean) {
-            type = Type.Boolean;
+            type = Type.BOOLEAN;
         } else if (value instanceof Pattern) {
-            type = Type.Pattern;
-        } else if (value instanceof Integer) {
-            type = Type.Long;
-            value = ((Integer) value).longValue();
-        } else if (value instanceof Float) {
-            type = Type.Double;
-            value = ((Float) value).doubleValue();
+            type = Type.PATTERN;
+        } else if (value instanceof Integer intValue) {
+            type = Type.LONG;
+            value = intValue.longValue();
+        } else if (value instanceof Float floatValue) {
+            type = Type.DOUBLE;
+            value = floatValue.doubleValue();
         } else {
             throw new QueryCompilerException(String.format("unknown value type %s", value.getClass()));
         }

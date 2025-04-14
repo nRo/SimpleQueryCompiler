@@ -70,11 +70,6 @@ public class TermQueryVisitor extends QueryBaseVisitor<QueryNode> {
         return textSearchVisitor.visitFull_search(ctx);
     }
 
-    @Override
-    public QueryNode visitValue_list(QueryParser.Value_listContext ctx) {
-        return super.visitValue_list(ctx);
-    }
-
     /**
      * Creates a query node from a query context.
      * Recursively creates all child query nodes for the root query context.
@@ -82,6 +77,7 @@ public class TermQueryVisitor extends QueryBaseVisitor<QueryNode> {
      * @param ctx root query context
      * @return query node
      */
+    @Override
     public QueryNode visitQuery(QueryParser.QueryContext ctx) {
         if (ctx.term() != null) {
             TermVisitor termVisitor = new TermVisitor(context);

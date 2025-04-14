@@ -38,7 +38,7 @@ public class StringUtil {
     }
 
 
-    private static final Pattern NUMBER_PATTERN = Pattern.compile("[0-9]+([.,][0-9]+)?");
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("\\d+([.,]\\d+)?");
 
     /**
      * Creates a string by repeating a specified char
@@ -168,7 +168,7 @@ public class StringUtil {
      * @param split char used to split
      * @param parts list filled with the resulting parts
      */
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings({"ConstantConditions", "java:S3776", "java:S135"})
     public static void splitQuoted(String input, Character split, List<String> parts) {
         if (input.isEmpty()) {
             return;
@@ -201,7 +201,7 @@ public class StringUtil {
             } else if (c == '\"') {
                 if (inDoubleQuotation) {
                     inDoubleQuotation = false;
-                } else if (!inDoubleQuotation && startOrSplit) {
+                } else if (startOrSplit) {
                     inDoubleQuotation = true;
                     startOrSplit = false;
                 } else {

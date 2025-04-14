@@ -1,16 +1,14 @@
-package de.alexgruen.querycompiler;
+package de.alexgruen.query.util;
 
-import de.alexgruen.query.compiler.QueryCompilerException;
 import de.alexgruen.query.term.Field;
 import de.alexgruen.query.term.Value;
-import de.alexgruen.query.util.CompilerUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class CompilerUtilTest {
+class CompilerUtilTest {
 
     @Test
-    public void testCreateArray() {
+    void testCreateArray() {
         String[] stringArray = CompilerUtil.createArray(String.class, 3);
         Assertions.assertNotNull(stringArray);
         Assertions.assertEquals(3, stringArray.length);
@@ -29,7 +27,7 @@ public class CompilerUtilTest {
     }
 
     @Test
-    public void testCreateField() {
+    void testCreateField() {
         Field simpleField = new Field("x", "x");
         Assertions.assertEquals("x", simpleField.getFullPath());
         Assertions.assertEquals(1, simpleField.getPath().length);
@@ -44,7 +42,7 @@ public class CompilerUtilTest {
     }
 
     @Test
-    public void testCreateValue() {
+    void testCreateValue() {
         Value nullValue = new Value(null);
         Assertions.assertTrue(nullValue.isNull());
 

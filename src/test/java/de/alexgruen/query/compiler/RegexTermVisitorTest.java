@@ -1,17 +1,15 @@
-package de.alexgruen.querycompiler;
+package de.alexgruen.query.compiler;
 
-import de.alexgruen.query.compiler.QueryCompilerException;
-import de.alexgruen.query.compiler.RegexTermVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
-public class RegexTermVisitorTest {
+class RegexTermVisitorTest {
 
     @Test
-    public void testConvertPattern() throws Exception {
+    void testConvertPattern() throws Exception {
         Method convertPatternMethod = RegexTermVisitor.class.getDeclaredMethod("convertPattern", String.class);
         convertPatternMethod.setAccessible(true);
 
@@ -33,7 +31,7 @@ public class RegexTermVisitorTest {
     }
 
     @Test
-    public void testConvertPatternInvalid() throws Exception {
+    void testConvertPatternInvalid() throws Exception {
         Method convertPatternMethod = RegexTermVisitor.class.getDeclaredMethod("convertPattern", String.class);
         convertPatternMethod.setAccessible(true);
 

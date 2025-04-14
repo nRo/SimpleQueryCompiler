@@ -1,27 +1,28 @@
-package de.alexgruen.querycompiler;
+package de.alexgruen.query.term;
 
 import de.alexgruen.query.compiler.QueryCompilerException;
-import de.alexgruen.query.term.Value;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class ValueTest {
+class ValueTest {
 
     @Test
-    public void testValueCreation() {
+    @SuppressWarnings("java:S5961")
+    void testValueCreation() {
         Value nullValue = new Value(null);
         Assertions.assertTrue(nullValue.isNull());
-        Assertions.assertEquals(Value.Type.Null, nullValue.getType());
+        Assertions.assertEquals(Value.Type.NULL, nullValue.getType());
         Assertions.assertNull(nullValue.getValue());
         Assertions.assertNull(nullValue.getString());
 
         Double doubleVal = 123.45;
         Value doubleValue = new Value(doubleVal);
-        Assertions.assertEquals(Value.Type.Double, doubleValue.getType());
+        Assertions.assertEquals(Value.Type.DOUBLE, doubleValue.getType());
         Assertions.assertEquals(doubleVal, doubleValue.getValue());
         Assertions.assertTrue(doubleValue.isNumber());
         Assertions.assertEquals(doubleVal, doubleValue.getDouble());
@@ -29,7 +30,7 @@ public class ValueTest {
 
         Long longVal = 123L;
         Value longValue = new Value(longVal);
-        Assertions.assertEquals(Value.Type.Long, longValue.getType());
+        Assertions.assertEquals(Value.Type.LONG, longValue.getType());
         Assertions.assertEquals(longVal, longValue.getValue());
         Assertions.assertTrue(longValue.isNumber());
         Assertions.assertEquals(123.0, longValue.getDouble());
@@ -37,44 +38,44 @@ public class ValueTest {
 
         String stringVal = "test";
         Value stringValue = new Value(stringVal);
-        Assertions.assertEquals(Value.Type.String, stringValue.getType());
+        Assertions.assertEquals(Value.Type.STRING, stringValue.getType());
         Assertions.assertEquals(stringVal, stringValue.getValue());
         Assertions.assertTrue(stringValue.isString());
         Assertions.assertEquals(stringVal, stringValue.getString());
 
         Boolean boolVal = true;
         Value boolValue = new Value(boolVal);
-        Assertions.assertEquals(Value.Type.Boolean, boolValue.getType());
+        Assertions.assertEquals(Value.Type.BOOLEAN, boolValue.getType());
         Assertions.assertEquals(boolVal, boolValue.getValue());
         Assertions.assertTrue(boolValue.isBoolean());
         Assertions.assertEquals(boolVal, boolValue.getBoolean());
 
         Pattern patternVal = Pattern.compile("test");
         Value patternValue = new Value(patternVal);
-        Assertions.assertEquals(Value.Type.Pattern, patternValue.getType());
+        Assertions.assertEquals(Value.Type.PATTERN, patternValue.getType());
         Assertions.assertEquals(patternVal, patternValue.getValue());
         Assertions.assertTrue(patternValue.isPattern());
         Assertions.assertEquals(patternVal, patternValue.getPattern());
 
         Integer intVal = 123;
         Value intValue = new Value(intVal);
-        Assertions.assertEquals(Value.Type.Long, intValue.getType());
+        Assertions.assertEquals(Value.Type.LONG, intValue.getType());
         Assertions.assertEquals(123L, intValue.getValue());
 
         Float floatVal = 123.45f;
         Value floatValue = new Value(floatVal);
-        Assertions.assertEquals(Value.Type.Double, floatValue.getType());
+        Assertions.assertEquals(Value.Type.DOUBLE, floatValue.getType());
         Assertions.assertEquals(123.45, floatValue.getDouble(), 0.001);
     }
 
     @Test
-    public void testListValue() {
+    void testListValue() {
         List<Value> valueList = new ArrayList<>();
         valueList.add(new Value("test1"));
         valueList.add(new Value(123L));
 
         Value listValue = new Value(valueList);
-        Assertions.assertEquals(Value.Type.List, listValue.getType());
+        Assertions.assertEquals(Value.Type.LIST, listValue.getType());
         Assertions.assertTrue(listValue.isList());
         Assertions.assertEquals(valueList, listValue.getList());
         Assertions.assertEquals(2, listValue.getList().size());
@@ -83,17 +84,15 @@ public class ValueTest {
     }
 
     @Test
-    public void testInvalidListValue() {
+    void testInvalidListValue() {
         List<String> invalidList = new ArrayList<>();
         invalidList.add("test");
 
-        Assertions.assertThrows(QueryCompilerException.class, () -> {
-            new Value(invalidList);
-        });
+        Assertions.assertThrows(QueryCompilerException.class, () -> new Value(invalidList));
     }
 
     @Test
-    public void testTypeConversionExceptions() {
+    void testTypeConversionExceptions() {
         Value stringValue = new Value("test");
 
         Assertions.assertThrows(QueryCompilerException.class, stringValue::getDouble);
@@ -108,14 +107,13 @@ public class ValueTest {
     }
 
     @Test
-    public void testUnsupportedType() {
-        Assertions.assertThrows(QueryCompilerException.class, () -> {
-            new Value(new StringBuilder("test"));
-        });
+    void testUnsupportedType() {
+        File input = new File("test");
+        Assertions.assertThrows(QueryCompilerException.class, () -> new Value(input));
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         Value stringValue = new Value("test");
         Assertions.assertEquals("test", stringValue.toString());
 

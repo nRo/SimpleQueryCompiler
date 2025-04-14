@@ -29,6 +29,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class LogicalOperators {
+    private LogicalOperators() {
+        throw new IllegalStateException("utility class");
+    }
+
     /**
      * AND operator
      */

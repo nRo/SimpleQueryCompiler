@@ -1,22 +1,20 @@
-package de.alexgruen.querycompiler;
+package de.alexgruen.query.compiler;
 
-import de.alexgruen.query.*;
-import de.alexgruen.query.compiler.QueryCompiler;
-import de.alexgruen.query.compiler.QueryCompilerException;
+import de.alexgruen.query.PrintQuery;
+import de.alexgruen.query.PrintQueryCreator;
+import de.alexgruen.query.QueryTree;
 import de.alexgruen.query.optimization.QueryOptimization;
-import de.alexgruen.query.term.Field;
-import de.alexgruen.query.term.Value;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class QueryCompilerTest {
+class QueryCompilerTest {
 
     @Test
-    public void testCompileWithInvalidInput() {
-        QueryCompiler<PrintQuery> compiler = QueryCompiler.create(PrintQuery.class)
+    void testCompileWithInvalidInput() {
+        QueryCompiler<PrintQuery> compiler = QueryCompilerBuilder.create(PrintQuery.class)
                 .withQueryCreator(new PrintQueryCreator())
                 .build();
 
@@ -28,8 +26,8 @@ public class QueryCompilerTest {
     }
 
     @Test
-    public void testCompileTree() {
-        QueryCompiler<PrintQuery> compiler = QueryCompiler.create(PrintQuery.class)
+    void testCompileTree() {
+        QueryCompiler<PrintQuery> compiler = QueryCompilerBuilder.create(PrintQuery.class)
                 .withQueryCreator(new PrintQueryCreator())
                 .build();
 
@@ -44,11 +42,11 @@ public class QueryCompilerTest {
     }
 
     @Test
-    public void testCompileWithCustomOptimization() {
+    void testCompileWithCustomOptimization() {
         final int[] count = {0};
         QueryOptimization countingOptimization = tree -> count[0]++;
 
-        QueryCompiler<PrintQuery> compiler = QueryCompiler.create(PrintQuery.class)
+        QueryCompiler<PrintQuery> compiler = QueryCompilerBuilder.create(PrintQuery.class)
                 .withQueryCreator(new PrintQueryCreator())
                 .withOptimization(countingOptimization)
                 .build();
@@ -61,8 +59,8 @@ public class QueryCompilerTest {
     }
 
     @Test
-    public void testCompileWithEmptyInput() {
-        QueryCompiler<PrintQuery> compiler = QueryCompiler.create(PrintQuery.class)
+    void testCompileWithEmptyInput() {
+        QueryCompiler<PrintQuery> compiler = QueryCompilerBuilder.create(PrintQuery.class)
                 .withQueryCreator(new PrintQueryCreator())
                 .build();
 
@@ -74,8 +72,8 @@ public class QueryCompilerTest {
     }
 
     @Test
-    public void testCompileWithNoEmptyCreator() {
-        QueryCompiler<PrintQuery> compiler = QueryCompiler.create(PrintQuery.class)
+    void testCompileWithNoEmptyCreator() {
+        QueryCompiler<PrintQuery> compiler = QueryCompilerBuilder.create(PrintQuery.class)
                 .withANDCreator((node, children) -> new PrintQuery() {
                     @Override
                     public String toString() {
@@ -84,14 +82,12 @@ public class QueryCompilerTest {
                 })
                 .build();
 
-        Assertions.assertThrows(QueryCompilerException.class, () -> {
-            compiler.compile("");
-        });
+        Assertions.assertThrows(QueryCompilerException.class, () -> compiler.compile(""));
     }
 
     @Test
-    public void testGetContext() {
-        QueryCompiler<PrintQuery> compiler = QueryCompiler.create(PrintQuery.class)
+    void testGetContext() {
+        QueryCompiler<PrintQuery> compiler = QueryCompilerBuilder.create(PrintQuery.class)
                 .withQueryCreator(new PrintQueryCreator())
                 .build();
 
@@ -100,14 +96,14 @@ public class QueryCompilerTest {
     }
 
     @Test
-    public void testGetOptimizations() {
+    void testGetOptimizations() {
         List<QueryOptimization> optimizations = new ArrayList<>();
         optimizations.add(tree -> {
         });
         optimizations.add(tree -> {
         });
 
-        QueryCompiler<PrintQuery> compiler = QueryCompiler.create(PrintQuery.class)
+        QueryCompiler<PrintQuery> compiler = QueryCompilerBuilder.create(PrintQuery.class)
                 .withQueryCreator(new PrintQueryCreator())
                 .withOptimization(optimizations.get(0))
                 .withOptimization(optimizations.get(1))

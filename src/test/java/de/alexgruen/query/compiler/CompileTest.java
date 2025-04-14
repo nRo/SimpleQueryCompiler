@@ -1,24 +1,22 @@
-package de.alexgruen.querycompiler;
+package de.alexgruen.query.compiler;
 
 import de.alexgruen.query.PrintQuery;
 import de.alexgruen.query.PrintQueryCreator;
 import de.alexgruen.query.QueryTree;
-import de.alexgruen.query.compiler.QueryCompiler;
-import de.alexgruen.query.compiler.QueryCompilerException;
 import de.alexgruen.query.optimization.Optimizations;
 import de.alexgruen.query.term.TermOperator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class CompileTest {
+class CompileTest {
     private static final QueryCompiler<PrintQuery> PRINT_COMPILER
-            = QueryCompiler.create(PrintQuery.class)
+            = QueryCompilerBuilder.create(PrintQuery.class)
             .withQueryCreator(new PrintQueryCreator())
             .withOptimization(Optimizations.RemoveRedundantBrackets)
             .build();
 
     @Test
-    public void testCompile() {
+    void testCompile() {
 
 
         test("x > 0", "(x > 0)");
@@ -49,14 +47,14 @@ public class CompileTest {
     }
 
     @Test
-    public void testOptimization() {
+    void testOptimization() {
         System.out.println("###### remove brackets optimization:");
 
-        QueryCompiler<PrintQuery> noOptimizationCompiler = QueryCompiler
+        QueryCompiler<PrintQuery> noOptimizationCompiler = QueryCompilerBuilder
                 .create(PrintQuery.class)
                 .withQueryCreator(new PrintQueryCreator())
                 .build();
-        QueryCompiler<PrintQuery> withOptimizationCompiler = QueryCompiler
+        QueryCompiler<PrintQuery> withOptimizationCompiler = QueryCompilerBuilder
                 .create(PrintQuery.class)
                 .withQueryCreator(new PrintQueryCreator())
                 .withOptimization(Optimizations.RemoveRedundantBrackets)
@@ -74,7 +72,7 @@ public class CompileTest {
     }
 
     @Test
-    public void testException() {
+    void testException() {
         Assertions.assertThrows(QueryCompilerException.class,
                 () -> PRINT_COMPILER.compile("x > a"));
 
@@ -89,7 +87,7 @@ public class CompileTest {
     }
 
     @Test
-    public void fullTextSearchTest() {
+    void fullTextSearchTest() {
         test("xyz", "('xyz')");
         test("-xyz", "(!'xyz')");
         test("'xyz'", "('xyz')");
@@ -99,25 +97,24 @@ public class CompileTest {
     }
 
     @Test
-    public void testTreeCase1() {
+    void testTreeCase1() {
         String str = PRINT_COMPILER.compileTree("(x > 0 && y < 1 || (u == 2 && (h != 1 || z < 2))) || z == 2").toString();
-        System.out.println(str);
-
-        Assertions.assertEquals("──┐ OR\n" +
-                "  ├──┐ AND\n" +
-                "  │  ├── (x > 0)\n" +
-                "  │  └── (y < 1)\n" +
-                "  ├──┐ AND\n" +
-                "  │  ├── (u == 2)\n" +
-                "  │  └──┐ OR\n" +
-                "  │     ├── (h != 1)\n" +
-                "  │     └── (z < 2)\n" +
-                "  └── (z == 2)\n", str);
-        System.out.println(str);
+        Assertions.assertEquals("""
+                ──┐ OR
+                  ├──┐ AND
+                  │  ├── (x > 0)
+                  │  └── (y < 1)
+                  ├──┐ AND
+                  │  ├── (u == 2)
+                  │  └──┐ OR
+                  │     ├── (h != 1)
+                  │     └── (z < 2)
+                  └── (z == 2)
+                """, str);
     }
 
     @Test
-    public void testListTerm() {
+    void testListTerm() {
         test("x IN ('1', '2')", "(x in ['1', '2'])");
         test("x !in ('1', 2, 3.1)", "(x !in ['1', 2, 3.1])");
         test("x in (1,2,3)", "(x in [1, 2, 3])");
@@ -126,9 +123,9 @@ public class CompileTest {
     }
 
     @Test
-    public void testCustomOperator() {
+    void testCustomOperator() {
         QueryCompiler<PrintQuery> compiler
-                = QueryCompiler.create(PrintQuery.class)
+                = QueryCompilerBuilder.create(PrintQuery.class)
                 .withQueryCreator(new PrintQueryCreator())
                 .withTermCreator(
                         new TermOperator("&="),
@@ -153,7 +150,7 @@ public class CompileTest {
     private void test(String input, String output, QueryCompiler<PrintQuery> compiler, boolean printTree) {
         QueryTree tree = compiler.compileTree(input);
         if (printTree) {
-            System.out.println(String.format("%s ->\n%s", input, tree.toString()));
+            System.out.printf("%s ->%n%s%n", input, tree.toString());
         }
         PrintQuery p = compiler.compile(tree);
         Assertions.assertEquals(output, p.toString());

@@ -3,8 +3,6 @@ package de.alexgruen.query;
 import de.alexgruen.query.term.Field;
 import de.alexgruen.query.term.Value;
 
-import java.util.List;
-
 public interface QueryCreator<T> {
     /**
      * Query creator for != operator

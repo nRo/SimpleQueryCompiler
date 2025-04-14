@@ -41,7 +41,7 @@ import java.util.Map;
  */
 public class OperatorCreatorMap<O extends Operator, H extends OperatorCreator> {
     private final Map<String, O> operatorMap = new HashMap<>();
-    private final Map<O, H> operatorCreatorMap = new HashMap<>();
+    private final Map<O, H> creatorMap = new HashMap<>();
 
     /**
      * Returns all names and aliases of the operators saved in this map
@@ -73,7 +73,7 @@ public class OperatorCreatorMap<O extends Operator, H extends OperatorCreator> {
      */
     public void add(O operator, H creator) {
         add(operator);
-        operatorCreatorMap.put(operator, creator);
+        creatorMap.put(operator, creator);
     }
 
     /**
@@ -84,7 +84,7 @@ public class OperatorCreatorMap<O extends Operator, H extends OperatorCreator> {
      * @return creator
      */
     public H getCreator(O operator) {
-        return operatorCreatorMap.get(operator);
+        return creatorMap.get(operator);
     }
 
     /**

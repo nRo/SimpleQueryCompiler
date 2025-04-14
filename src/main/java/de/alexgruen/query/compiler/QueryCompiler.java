@@ -46,30 +46,6 @@ public class QueryCompiler<T extends Query> {
     }
 
     /**
-     * Create a new {@link QueryCompilerBuilder}
-     *
-     * @param cl  target class
-     * @param <T> target type
-     * @return query compiler instance
-     */
-    public static <T extends Query> QueryCompilerBuilder<T> create(Class<T> cl) {
-        return QueryCompilerBuilder.create(cl);
-    }
-
-
-    /**
-     * Create a new {@link QueryCompilerBuilder} using a {@link QueryCreator}.
-     *
-     * @param cl             target class
-     * @param queryCreator default operation creator
-     * @param <T>            target type
-     * @return query compiler instance
-     */
-    public static <T extends Query> QueryCompilerBuilder<T> createDefault(Class<T> cl, QueryCreator<T> queryCreator) {
-        return QueryCompilerBuilder.createDefault(cl, queryCreator);
-    }
-
-    /**
      * Returns the {@link QueryContext}
      *
      * @return context

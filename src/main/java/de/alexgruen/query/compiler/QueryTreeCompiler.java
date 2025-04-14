@@ -56,7 +56,7 @@ public class QueryTreeCompiler<T extends Query> {
      */
     public QueryTree compile(String queryString) {
         if (context == null) {
-            throw new RuntimeException("context required");
+            throw new QueryCompilerException("context required");
         }
 
         queryString = queryString.trim();
