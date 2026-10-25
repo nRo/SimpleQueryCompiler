@@ -30,16 +30,16 @@ import de.alexgruen.query.term.Value;
 /**
  * Default creator for {@link PrintQuery}
  */
-public class PrintQueryCreator extends DefaultCreator<PrintQuery> {
+public class PrintQueryCreator implements QueryCreator<PrintQuery> {
     public static String value2string(Value value) {
         if (value.isNull()) {
             return null;
         }
-        return value.isString() ? String.format("'%s'", value.toString()) : value.toString();
+        return value.isString() ? String.format("'%s'", value) : value.toString();
     }
 
     @Override
-    public PrintQuery ne(Field field, Value value) {
+    public PrintQuery ne(QueryNode node, Field field, Value value) {
         return new PrintQuery() {
             @Override
             public String toString() {
@@ -49,7 +49,7 @@ public class PrintQueryCreator extends DefaultCreator<PrintQuery> {
     }
 
     @Override
-    public PrintQuery eq(Field field, Value value) {
+    public PrintQuery eq(QueryNode node, Field field, Value value) {
         return new PrintQuery() {
             @Override
             public String toString() {
@@ -59,7 +59,7 @@ public class PrintQueryCreator extends DefaultCreator<PrintQuery> {
     }
 
     @Override
-    public PrintQuery gt(Field field, Value value) {
+    public PrintQuery gt(QueryNode node, Field field, Value value) {
         return new PrintQuery() {
             @Override
             public String toString() {
@@ -69,7 +69,7 @@ public class PrintQueryCreator extends DefaultCreator<PrintQuery> {
     }
 
     @Override
-    public PrintQuery ge(Field field, Value value) {
+    public PrintQuery ge(QueryNode node, Field field, Value value) {
         return new PrintQuery() {
             @Override
             public String toString() {
@@ -79,7 +79,7 @@ public class PrintQueryCreator extends DefaultCreator<PrintQuery> {
     }
 
     @Override
-    public PrintQuery lt(Field field, Value value) {
+    public PrintQuery lt(QueryNode node, Field field, Value value) {
         return new PrintQuery() {
             @Override
             public String toString() {
@@ -89,7 +89,7 @@ public class PrintQueryCreator extends DefaultCreator<PrintQuery> {
     }
 
     @Override
-    public PrintQuery le(Field field, Value value) {
+    public PrintQuery le(QueryNode node, Field field, Value value) {
         return new PrintQuery() {
             @Override
             public String toString() {
@@ -99,7 +99,7 @@ public class PrintQueryCreator extends DefaultCreator<PrintQuery> {
     }
 
     @Override
-    public PrintQuery regex(Field field, Value value) {
+    public PrintQuery regex(QueryNode node, Field field, Value value) {
         return new PrintQuery() {
             @Override
             public String toString() {
@@ -109,7 +109,7 @@ public class PrintQueryCreator extends DefaultCreator<PrintQuery> {
     }
 
     @Override
-    public PrintQuery text(Field field, Value value) {
+    public PrintQuery text(QueryNode node, Field field, Value value) {
         return new PrintQuery() {
             @Override
             public String toString() {
@@ -119,7 +119,29 @@ public class PrintQueryCreator extends DefaultCreator<PrintQuery> {
     }
 
     @Override
-    public PrintQuery not(PrintQuery a) {
+    public PrintQuery in(QueryNode node, Field field, Value list) {
+        return new PrintQuery() {
+            @Override
+            public String toString() {
+                String values = String.join(", ", list.getList().stream().map(PrintQueryCreator::value2string).toList());
+                return String.format("(%s in [%s])", field, values);
+            }
+        };
+    }
+
+    @Override
+    public PrintQuery notIn(QueryNode node, Field field, Value list) {
+        return new PrintQuery() {
+            @Override
+            public String toString() {
+                String values = String.join(", ", list.getList().stream().map(PrintQueryCreator::value2string).toList());
+                return String.format("(%s !in [%s])", field, values);
+            }
+        };
+    }
+
+    @Override
+    public PrintQuery not(QueryNode node, PrintQuery a) {
         return new PrintQuery() {
             @Override
             public String toString() {
@@ -129,9 +151,8 @@ public class PrintQueryCreator extends DefaultCreator<PrintQuery> {
     }
 
 
-
     @Override
-    public PrintQuery and(PrintQuery... p) {
+    public PrintQuery and(QueryNode node, PrintQuery... p) {
 
         return new PrintQuery() {
             @Override
@@ -151,7 +172,7 @@ public class PrintQueryCreator extends DefaultCreator<PrintQuery> {
     }
 
     @Override
-    public PrintQuery or(PrintQuery... p) {
+    public PrintQuery or(QueryNode node, PrintQuery... p) {
         return new PrintQuery() {
             @Override
             public String toString() {
@@ -170,7 +191,7 @@ public class PrintQueryCreator extends DefaultCreator<PrintQuery> {
     }
 
     @Override
-    public PrintQuery xor(PrintQuery... p) {
+    public PrintQuery xor(QueryNode node, PrintQuery... p) {
         return new PrintQuery() {
             @Override
             public String toString() {
@@ -189,7 +210,7 @@ public class PrintQueryCreator extends DefaultCreator<PrintQuery> {
     }
 
     @Override
-    public PrintQuery nor(PrintQuery... p) {
+    public PrintQuery nor(QueryNode node, PrintQuery... p) {
         return new PrintQuery() {
             @Override
             public String toString() {
@@ -217,7 +238,13 @@ public class PrintQueryCreator extends DefaultCreator<PrintQuery> {
         };
     }
 
-
-
-
+    @Override
+    public PrintQuery empty() {
+        return new PrintQuery() {
+            @Override
+            public String toString() {
+                return "*";
+            }
+        };
+    }
 }

@@ -27,10 +27,11 @@ package de.alexgruen.query;
 /**
  * Simple queries that create a string representation of the query
  */
-public abstract class PrintQuery implements Query{
+public abstract class PrintQuery implements Query {
 
     /**
      * Returns the string representation of this query
+     *
      * @return string representation
      */
     @Override

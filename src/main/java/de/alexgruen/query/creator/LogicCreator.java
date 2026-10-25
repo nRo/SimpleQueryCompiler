@@ -31,12 +31,11 @@ public interface LogicCreator<T> extends OperatorCreator {
 
     /**
      * Creates a new term from several input terms.
-     * @param node query node
+     *
+     * @param node     query node
      * @param children input terms
      * @return new term
      */
     @SuppressWarnings("unchecked")
     T create(QueryNode node, T... children);
-
-
 }

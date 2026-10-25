@@ -38,8 +38,9 @@ public class Field {
     /**
      * Creates a field from a path string and a path array.
      * E.g.: "test.field" , ["test","field"]
+     *
      * @param fullPath full path
-     * @param path path array
+     * @param path     path array
      */
     public Field(String fullPath, String... path) {
         this.fullPath = fullPath;
@@ -49,6 +50,7 @@ public class Field {
     /**
      * Creates a field from a single field name.
      * In this case, the path array has only one entry
+     *
      * @param name field name
      */
     public Field(String name) {
@@ -57,6 +59,7 @@ public class Field {
 
     /**
      * Returns the full path string (e.g. "test.field")
+     *
      * @return path string
      */
     public String getFullPath() {
@@ -65,6 +68,7 @@ public class Field {
 
     /**
      * Returns the path array (e.g. ["test", "field"]
+     *
      * @return
      */
     public String[] getPath() {
@@ -73,6 +77,7 @@ public class Field {
 
     /**
      * Sets the full path
+     *
      * @param fullPath full path
      */
     public void setFullPath(String fullPath) {
@@ -81,6 +86,7 @@ public class Field {
 
     /**
      * Sets the path array
+     *
      * @param path
      */
     public void setPath(String[] path) {
@@ -90,13 +96,13 @@ public class Field {
     /**
      * Creates the joinend path string from a path array.
      * <tt> from </tt> and <tt>to</tt> can be used to create the path string only from a certain range in the array
-     *
+     * <p>
      * e.g. ["test", "field 1"] -> "test.'field 1'"
      * from : 1, to: 2 : ["test","field 1", "subfield 2", "x"] -> "'field 1'.'subfield 2'"
      *
      * @param path path array
      * @param from from
-     * @param to to
+     * @param to   to
      * @return path string
      */
     public static String toJoinedPath(String[] path, int from, int to) {
@@ -116,39 +122,44 @@ public class Field {
 
     /**
      * Returns the length of the path array
+     *
      * @return
      */
-    public int getLength(){
+    public int getLength() {
         return path.length;
     }
 
     /**
      * Returns the part of the path array at an specified index
+     *
      * @param index path index
      * @return path part
      */
-    public String getPart(int index){
+    public String getPart(int index) {
         return path[index];
     }
 
     /**
      * Returns the joined path for this field ({@link #toJoinedPath(String[], int, int)})
+     *
      * @return joined path string
      */
-    public String getJoinedPath(){
-        return getJoinedPath(0,path.length);
+    public String getJoinedPath() {
+        return getJoinedPath(0, path.length);
     }
 
     /**
      * Returns the joined path for this field starting at a specified index ({@link #toJoinedPath(String[], int, int)})
+     *
      * @return joined path string
      */
-    public String getJoinedPath(int from){
-        return getJoinedPath(from,path.length);
+    public String getJoinedPath(int from) {
+        return getJoinedPath(from, path.length);
     }
 
     /**
      * Returns the joined path for this field at a specified range from the path array ({@link #toJoinedPath(String[], int, int)})
+     *
      * @return joined path string
      */
     public String getJoinedPath(int from, int to) {
@@ -161,6 +172,7 @@ public class Field {
 
     /**
      * Returns the joined path  ({@link #getJoinedPath()})
+     *
      * @return joined path
      */
     @Override

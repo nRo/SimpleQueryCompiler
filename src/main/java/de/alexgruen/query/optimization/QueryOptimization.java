@@ -29,6 +29,7 @@ import de.alexgruen.query.QueryTree;
 public interface QueryOptimization {
     /**
      * Optimizes an input query tree.
+     *
      * @param queryTree input query tree
      */
     void apply(QueryTree queryTree);

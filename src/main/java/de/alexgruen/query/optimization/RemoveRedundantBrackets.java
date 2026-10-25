@@ -31,22 +31,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RemoveRedundantBrackets implements QueryOptimization {
-
-
     /**
      * Removes redundant brackets from a query tree.
-     *
+     * <p>
      * ── AND
-     *    ├── (x > 1)
-     *    └── AND
-     *        ├── (y > 2)
-     *        └── (z < 3)
+     * ├── (x > 1)
+     * └── AND
+     * ├── (y > 2)
+     * └── (z < 3)
      * ---->
-     *
+     * <p>
      * ── AND
-     *    ├── (x > 1)
-     *    ├── (y > 2)
-     *    └── (z < 3)
+     * ├── (x > 1)
+     * ├── (y > 2)
+     * └── (z < 3)
+     *
      * @param queryTree input query tree
      */
     @Override
@@ -56,9 +55,10 @@ public class RemoveRedundantBrackets implements QueryOptimization {
 
     /**
      * Recursive function used to remove all redundant brackets
+     *
      * @param parent parent node
      */
-    private void compressRec(QueryNode parent){
+    private void compressRec(QueryNode parent) {
         List<QueryNode> children = new ArrayList<>(parent.getChildren());
         int c = -1;
         for (QueryNode child : children) {

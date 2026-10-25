@@ -27,11 +27,12 @@ package de.alexgruen.query;
 /**
  * Logic operators are used to concatenate multiple array (e.g. AND, OR, XOR,...)
  */
-public class LogicalOperator extends Operator{
+public class LogicalOperator extends Operator {
 
     /**
      * Creates a logic operator from a name and array of aliases
-     * @param name operator name
+     *
+     * @param name    operator name
      * @param aliases operator aliases
      */
     public LogicalOperator(String name, String... aliases) {

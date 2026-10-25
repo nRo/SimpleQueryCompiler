@@ -33,15 +33,16 @@ import de.alexgruen.query.generated.QueryParser;
  */
 public class TermQueryVisitor extends QueryBaseVisitor<QueryNode> {
 
-    private QueryContext context;
+    private final QueryContext<?> context;
 
-    public TermQueryVisitor(QueryContext context) {
+    public TermQueryVisitor(QueryContext<?> context) {
         this.context = context;
     }
 
 
     /**
      * Converts the root compilation context to the root query node
+     *
      * @param ctx root context
      * @return root node
      */
@@ -59,6 +60,7 @@ public class TermQueryVisitor extends QueryBaseVisitor<QueryNode> {
 
     /**
      * Uses a {@link TextSearchVisitor} to convert a full text search context to a query node
+     *
      * @param ctx full search context
      * @return query node
      */
@@ -68,13 +70,14 @@ public class TermQueryVisitor extends QueryBaseVisitor<QueryNode> {
         return textSearchVisitor.visitFull_search(ctx);
     }
 
-
     /**
      * Creates a query node from a query context.
      * Recursively creates all child query nodes for the root query context.
+     *
      * @param ctx root query context
      * @return query node
      */
+    @Override
     public QueryNode visitQuery(QueryParser.QueryContext ctx) {
         if (ctx.term() != null) {
             TermVisitor termVisitor = new TermVisitor(context);
@@ -103,6 +106,7 @@ public class TermQueryVisitor extends QueryBaseVisitor<QueryNode> {
 
     /**
      * Recursive function to create query nodes from a query context
+     *
      * @param ctx query context
      * @return query node with all child query nodes
      */
@@ -117,7 +121,7 @@ public class TermQueryVisitor extends QueryBaseVisitor<QueryNode> {
         }
 
         if (ctx.query().size() == 1) {
-            QueryNode n =  visitQueryRecursive(ctx.query(0));
+            QueryNode n = visitQueryRecursive(ctx.query(0));
             if (ctx.NEGATE() != null) {
                 n.setNegate(true);
             }

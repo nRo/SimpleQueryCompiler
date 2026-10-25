@@ -42,7 +42,8 @@ public class RegexTermVisitor extends QueryBaseVisitor<QueryNode> {
 
     /**
      * Creates a {@link QueryNode} that represents a regex term.
-     * An exception is thrown if the context can not be converted to a node
+     * An exception is thrown if the context cannot be converted to a node
+     *
      * @param ctx input regex context
      * @return query node
      */
@@ -52,25 +53,22 @@ public class RegexTermVisitor extends QueryBaseVisitor<QueryNode> {
 
         Pattern pattern = convertPattern(ctx.REGEX().getText());
         Value value = new Value(pattern);
-        return new QueryNode(new Term(field,TermOperators.REGEX, value));
+        return new QueryNode(new Term(field, TermOperators.REGEX, value));
     }
 
     /**
      * Converts an input string to a {@link Pattern}.
      * A {@link QueryCompilerException} is thrown if the input string is not in the right format
+     *
      * @param text input string
      * @return compiled pattern
      */
-    private static Pattern convertPattern(String text){
+    private static Pattern convertPattern(String text) {
         String regex = text;
-        if(!regex.startsWith("/") || ! regex.endsWith("/")){
-            throw new QueryCompilerException(String.format("wrong pattern format: %s",text));
+        if (!regex.startsWith("/") || !regex.endsWith("/")) {
+            throw new QueryCompilerException(String.format("wrong pattern format: %s", text));
         }
-        regex = regex.substring(1,regex.length()-1);
+        regex = regex.substring(1, regex.length() - 1);
         return Pattern.compile(regex);
-
     }
-
-
-
 }
