@@ -1,202 +1,136 @@
-# Simple Query Compiler
-![travis](https://travis-ci.org/nRo/SimpleQueryCompiler.svg?branch=master)
-[![codecov](https://codecov.io/gh/nRo/SimpleQueryCompiler/branch/master/graph/badge.svg)](https://codecov.io/gh/nRo/SimpleQueryCompiler)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a03214f7198f4461ab341adecb75e0da)](https://www.codacy.com/app/nRo/DataFrame?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nRo/DataFrame&amp;utm_campaign=Badge_Grade)
+# Query Compiler
 
-A Java library to compile and parse simple filter queries.
+[![Build](https://github.com/nRo/query-compiler/actions/workflows/build.yml/badge.svg)](https://github.com/nRo/query-compiler/actions/workflows/build.yml)
+[![codecov](https://codecov.io/gh/nRo/query-compiler/branch/master/graph/badge.svg)](https://codecov.io/gh/nRo/query-compiler)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
 
-The following query formats can be parsed:
+A Java library that parses filter queries and turns them into any target object
+(SQL, Elasticsearch queries, in-memory predicates, ...).
+The grammar is built with [ANTLR 4](https://www.antlr.org/).
+
 ```
-// multiple terms with AND and OR operator
-(x > 0 && !(y < 1 || z == 'test')) 
+String ──► ANTLR lexer/parser ──► QueryTree ──► optimizations ──► your creators ──► target object
 ```
+
+Supported query formats:
+
 ```
-//full text search
+// terms combined with logical operators
+(x > 0 && !(y < 1 || z == 'test'))
+
+// full text search
 "text search" test -example
 ```
 
-Default term operators:
+Term operators: `==`, `!=`, `<`, `<=`, `>`, `>=`, `text`, `regex`, `in`, `!in`  
+Logical operators, from highest to lowest precedence: `AND` (`&`, `&&`), `XOR`, `OR` (`|`, `||`) and `NOR`.
+Operators of the same level are grouped from left to right; use brackets to override: `(a || b) && c`.
+
+## Build
+
+Requires JDK 21 or newer.
+
 ```
-==, !=, <, <=, >, >=, text, regex
-```
-
-Logical operators:
-```
-AND, OR, XOR, NOR
-```
-
-Build
------
-To build the library from sources:
-
-1) Clone github repository
-
-    $ git clone https://github.com/nRo/SimpleQueryCompiler.git
-
-2) Change to the created folder and run `mvn install`
-
-    $ cd SimpleQueryCompiler
-    
-    $ mvn install
-
-3) Include it by adding the following to your project's `pom.xml`:
-
-```xml
-<dependencies>
-...
-    <dependency>
-        <groupId>de.alexgruen</groupId>
-        <artifactId>querycompiler</artifactId>
-        <version>0.3-SNAPSHOT</version>
-    </dependency>
-...
-</dependencies>
+git clone https://github.com/nRo/query-compiler.git
+cd query-compiler
+./gradlew build
 ```
 
-Usage
------
-This library works by defining by building a QueryCompiler for the desired output type.
-Building a QueryCompiler requires the definition of Creators for the supported 
-term operators (==, !=, <, <=, ...) and logical operators (AND, OR,...).
-The Creators are responsible to create the target object, for example SQL queries, elasticsearch queries,...
+The library is not published to a public repository yet. To use it in another project, run
+`./gradlew publishToMavenLocal` and add:
 
-There are two ways to create a QueryCompiler.
-For the following examples be specify example ElasticSearchQuery as target class:
+```kotlin
+repositories { mavenLocal() }
+dependencies { implementation("dev.gruen:query-compiler:0.0.1-SNAPSHOT") }
+```
+
+## Usage
+
+A `QueryCompiler<T>` is built for a target type `T` (any class implementing `Query`).
+You tell the builder how to create a `T` for each term operator (`==`, `>`, ...) and each logical operator
+(`AND`, `OR`, ...). The compiler then turns query strings into `T` objects.
+
+The following example compiles queries into a filter that is evaluated against a row of values
+(the complete code is in [`ReadmeExampleTest`](src/test/java/dev/gruen/query/ReadmeExampleTest.java)):
+
 ```java
-public abstract class ElasticSearchQuery implements Query{
-    //Every query must create an ElasticSearch QueryBuilder
-    public abstract QueryBuilder create();
-    ...
+interface RowFilter extends Query {
+    boolean test(Map<String, Object> row);
 }
-```
-If a QueryCompiler is built, input strings can be parsed with:
-```java
-QueryCompiler<ElasticSearchQuery> esCompiler = ...
-ElasticSearchQuery esQuery = esCompiler.compile("(x > 1 && y < 1)");
-```
-##### Override DefaultCreator
-DefaultCreator is an abstract class that contains functions for all standard operations.
-If such a method is not overridden, an error is thrown if the input query string contains the respective operator.
-```java
-public class ElasticSearchQueryCreator extends DefaultCreator<ElasticSearchQuery> {
-    //override eq(field,value) to support == operator in input queries
-    //text search is implemented by overriding the fullSearch(Value value) method
-     @Override
-        public ElasticSearchQuery eq(Field field, Value value) {
-            return new ElasticSearchQuery() {
-                @Override
-                public QueryBuilder create() {
-                    return QueryBuilders.termQuery(field.toString(), value.getValue());
-                }
-            };
-        }
 
-    
-    //override other term operator methods: ne (!=), le(>=), lt(>),...
-    
-    ...
-    
-    //override and(query....) to support AND concatenation of terms
-    @Override
-        public ElasticSearchQuery and(ElasticSearchQuery... queries) {
-            return new ElasticSearchQuery() {
-                @Override
-                public QueryBuilder create() {
-                    BoolQueryBuilder boolQueryBuilder = boolQuery();
-                    for(ElasticSearchQuery q : queries){
-                        boolQueryBuilder.must(q.create());
-                    }
-    
-                    return boolQueryBuilder;
-                }
-            };
-        }
-        //override other logic operator methods: OR, XOR, NOR,...
-}
-```
-The compiler can then be created using the following Builder methods:
-```java
-QueryCompiler<ElasticSearchQuery> esCompiler
-            = QueryCompiler.create(ElasticSearchQuery.class)
-            .withDefaultCreator(new ElasticSearchQueryCreator())
-            .build();
+QueryCompiler<RowFilter> compiler = QueryCompilerBuilder.create(RowFilter.class)
+        .withTermCreator(TermOperators.EQ,
+                (node, field, value) -> row -> row.containsKey(field.toString())
+                        && compare(row.get(field.toString()), value) == 0)
+        .withTermCreator(TermOperators.GT,
+                (node, field, value) -> row -> row.containsKey(field.toString())
+                        && compare(row.get(field.toString()), value) > 0)
+        .withANDCreator((node, children) -> row -> Arrays.stream(children).allMatch(c -> c.test(row)))
+        .withORCreator((node, children) -> row -> Arrays.stream(children).anyMatch(c -> c.test(row)))
+        .withOptimization(new RemoveRedundantBrackets())
+        .build();
+
+RowFilter filter = compiler.compile("age > 18 && (country == 'DE' || country == 'AT')");
+filter.test(Map.of("age", 30, "country", "DE")); // true
+filter.test(Map.of("age", 30, "country", "FR")); // false
 ```
 
-##### Define creators using QueryCompilerBuilder
+### Implement `QueryCreator`
+
+Instead of registering every operator separately, implement `QueryCreator<T>`. It contains one method per operator
+(`eq`, `ne`, `lt`, `le`, `gt`, `ge`, `regex`, `text`, `in`, `notIn`, `not`, `and`, `or`, `xor`, `nor`,
+`fullSearch`, `empty`).
+`PrintQueryCreator` is a ready-made implementation that turns a query back into a string:
 
 ```java
-  QueryCompiler<ElasticSearchQuery> compiler = QueryCompiler
-        .create(ElasticSearchQuery.class)
-        .withTermCreator(
-               TermOperators.EQ,
-               (field,value) -> new ElasticSearchQuery() {
-                   @Override
-                   public String create() {
-                    return QueryBuilders.termQuery(field.toString(), value.getValue());
-                   }
-               }
-       )
-       .withANDCreator(
-               (queries) -> new ElasticSearchQuery() {
-                   BoolQueryBuilder boolQueryBuilder = boolQuery();
-                   for(ElasticSearchQuery q : queries){
-                       boolQueryBuilder.must(q.create());
-                   }
+QueryCompiler<PrintQuery> compiler = QueryCompilerBuilder
+        .createDefault(PrintQuery.class, new PrintQueryCreator())
+        .build();
 
-                   return boolQueryBuilder;
-               }
-       )
-    ).build()
+PrintQuery query = compiler.compile("x > 0 && (y < 1 || z == 'test')");
+// ((x > 0) && ((y < 1) || (z == 'test')))
 ```
 
+### Custom term operators
 
-#### Custom term operators
+Custom operators can be added with `withTermCreator`. Afterwards they can be used in queries:
 
-Custom term operators can be added to the QueryCompilerBuilder.
-In this example we add a PHRASE operator that creates an matchPhrase query for elasticsearch.
-User can than input queries like:;
+```java
+builder.withTermCreator(new TermOperator("PHRASE"), (node, field, value) -> ...);
+```
+
 ```
 x PHRASE 'test phrase' || y == 'test'
 ```
 
-```java
-  QueryCompiler<ElasticSearchQuery> compiler = QueryCompiler
-        .create(ElasticSearchQuery.class)
-        .withTermCreator(
-               .withTermCreator(
-                   new TermOperator("PHRASE"),
-                   (f,v) -> new ElasticSearchQuery() {
-                      @Override
-                     public String create() {
-                      return QueryBuilders.matchPhraseQuery(field.toString(), value.getValue());
-                     }
-                   }
-               )
-       )
-    )
-```
+### Print the query tree
 
-#### Print queries
-
-Queries are first compiled to a tree before being converted to the target object.
-This tree can be printed
+Queries are first compiled to a `QueryTree` before the target object is created. The tree can be printed:
 
 ```java
-   QueryTree tree = compiler.compileTree(
-           "(x > 0 && y < 1 || (u == 2 && (h != 1 || z < 2))) || z == 2");
-   String str = QueryPrinter.DEFAULT.toString(tree.getRoot());
-   /**
-   * ──┐ OR
-       ├──┐ AND
-       │  ├── (x > 0)
-       │  └── (y < 1)
-       ├──┐ AND
-       │  ├── (u == 2)
-       │  └──┐ OR
-       │     ├── (h != 1)
-       │     └── (z < 2)
-       └── (z == 2)
-   **/
-   //The tree can then be converted to the target object
-   ElasticSearchQuery esQuery = compiler.compile(tree);
+QueryTree tree = compiler.compileTree("x > 0 && (y < 1 || z == 'test')");
+String str = QueryPrinter.create().build().toString(tree.getRoot());
 ```
+
+```
+──┐ AND
+  ├── (x > 0)
+  └──┐ OR
+     ├── (y < 1)
+     └── (z == test)
+```
+
+The tree can then be converted to the target object with `compiler.compile(tree)`.
+
+
+## Release
+
+Releases are published to Maven Central with `./gradlew publishToMavenCentral`. The
+[vanniktech maven-publish plugin](https://vanniktech.github.io/gradle-maven-publish-plugin/) attaches the sources and
+javadoc jars, signs the artifacts and uploads them to the Central Portal; the deployment is then released manually there.
+The GitHub Actions workflow `release.yml` runs this for tags named `v*` (tag `v1.0.0` publishes version `1.0.0`) and
+needs the secrets `CENTRAL_USERNAME`, `CENTRAL_PASSWORD`, `GPG_PRIVATE_KEY` and `GPG_PASSPHRASE`.
+
+## License
+
+[MIT](LICENSE.txt)
