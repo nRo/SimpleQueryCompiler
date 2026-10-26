@@ -57,6 +57,8 @@ public class QueryTreeCompiler<T extends Query> {
             }
         }
 
+        parser.setColumnValues(context.isColumnValues());
+
         //Don't print errors to stderr
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
         parser.addErrorListener(errorListener);

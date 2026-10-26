@@ -10,12 +10,21 @@ grammar Query;
 
 @members {
     Set<String> customOperators = new HashSet<>();
+    boolean columnValues = false;
 
     public Set<String> getCustomOperators(){
         return customOperators;
     }
      public boolean validOperator(String id){
         return customOperators.contains(id);
+    }
+
+    public boolean isColumnValues(){
+        return columnValues;
+    }
+
+    public void setColumnValues(boolean columnValues){
+        this.columnValues = columnValues;
     }
 }
 
@@ -24,6 +33,7 @@ compilationUnit   : (query|full_search) EOF ;
 term :
 NEGATE? OPEN_BRACKET term CLOSE_BRACKET |
 variable term_operation value |
+{columnValues}? variable term_operation column_value |
 variable term_list_operation value_list |
 regex_term
 ;
@@ -45,6 +55,8 @@ term;
 
 
 value: (NUMBER | BOOLEAN_VALUE | TEXT_VALUE | NULL);
+// column reference as right-hand value, only active if the parser flag columnValues is set
+column_value: COLUMN;
 variable: VAR | COLUMN | TEXT_VALUE;
 
 term_operation: TERM_OPERATOR | custom_operator;

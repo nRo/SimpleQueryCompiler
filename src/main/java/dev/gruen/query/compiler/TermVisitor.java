@@ -57,7 +57,9 @@ public class TermVisitor extends QueryBaseVisitor<QueryNode> {
     private QueryNode createFieldFilterNode(QueryParser.TermContext ctx) {
         Field field = CompilerUtil.createField(ctx.variable());
         String operation = ctx.term_operation().getText();
-        Value value = CompilerUtil.createValue(ctx.value());
+        Value value = ctx.column_value() != null
+                ? CompilerUtil.createValue(ctx.column_value())
+                : CompilerUtil.createValue(ctx.value());
         return createFieldFilterNode(field, value, operation);
     }
 
