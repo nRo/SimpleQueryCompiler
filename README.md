@@ -3,7 +3,7 @@
 [![Build](https://github.com/nRo/query-compiler/actions/workflows/build.yml/badge.svg)](https://github.com/nRo/query-compiler/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/nRo/query-compiler/branch/master/graph/badge.svg)](https://codecov.io/gh/nRo/query-compiler)
 [![Maven Central](https://img.shields.io/maven-central/v/dev.gruen/query-compiler.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/dev.gruen/query-compiler)
-[![Javadocs](https://javadoc.io/badge2/dev.gruen/dataframe/javadoc.svg)](https://javadoc.io/doc/dev.gruen/query-compiler)
+[![Javadocs](https://javadoc.io/badge2/dev.gruen/query-compiler/javadoc.svg)](https://javadoc.io/doc/dev.gruen/query-compiler)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
 
 A Java library that parses filter queries and turns them into any target object
