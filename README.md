@@ -2,6 +2,8 @@
 
 [![Build](https://github.com/nRo/query-compiler/actions/workflows/build.yml/badge.svg)](https://github.com/nRo/query-compiler/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/nRo/query-compiler/branch/master/graph/badge.svg)](https://codecov.io/gh/nRo/query-compiler)
+[![Maven Central](https://img.shields.io/maven-central/v/dev.gruen/query-compiler.svg?label=Maven%20Central)](https://central.sonatype.com/artifact/dev.gruen/query-compiler)
+[![Javadocs](https://javadoc.io/badge2/dev.gruen/dataframe/javadoc.svg)](https://javadoc.io/doc/dev.gruen/query-compiler)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
 
 A Java library that parses filter queries and turns them into any target object
@@ -11,6 +13,8 @@ The grammar is built with [ANTLR 4](https://www.antlr.org/).
 ```
 String ──► ANTLR lexer/parser ──► QueryTree ──► optimizations ──► your creators ──► target object
 ```
+
+
 
 Supported query formats:
 
@@ -25,6 +29,23 @@ Supported query formats:
 Term operators: `==`, `!=`, `<`, `<=`, `>`, `>=`, `text`, `regex`, `in`, `!in`  
 Logical operators, from highest to lowest precedence: `AND` (`&`, `&&`), `XOR`, `OR` (`|`, `||`) and `NOR`.
 Operators of the same level are grouped from left to right; use brackets to override: `(a || b) && c`.
+
+Install
+-------
+
+Add this to your `pom.xml`:
+
+```xml
+<dependencies>
+...
+<dependency>
+  <groupId>dev.gruen</groupId>
+  <artifactId>query-compiler</artifactId>
+  <version>0.5.1</version>
+</dependency>
+...
+</dependencies>
+```
 
 ## Build
 
