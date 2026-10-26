@@ -14,6 +14,9 @@ public class PrintQueryCreator implements QueryCreator<PrintQuery> {
         if (value.isNull()) {
             return null;
         }
+        if (value.isField()) {
+            return value.getString();
+        }
         return value.isString() ? String.format("'%s'", value) : value.toString();
     }
 

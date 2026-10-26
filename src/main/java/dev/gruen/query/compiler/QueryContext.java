@@ -22,15 +22,25 @@ public class QueryContext<T extends Query> {
     private final OperatorCreatorMap<LogicalOperator, LogicCreator<T>> logicCreators;
     private final TermCreator<T> emptyCreator;
     private final Class<T> cl;
+    private final boolean columnValues;
 
     protected QueryContext(OperatorCreatorMap<TermOperator, TermCreator<T>> termCreators,
                            OperatorCreatorMap<LogicalOperator, LogicCreator<T>> logicCreators,
                            TermCreator<T> emptyCreator,
                            Class<T> cl) {
+        this(termCreators, logicCreators, emptyCreator, cl, false);
+    }
+
+    protected QueryContext(OperatorCreatorMap<TermOperator, TermCreator<T>> termCreators,
+                           OperatorCreatorMap<LogicalOperator, LogicCreator<T>> logicCreators,
+                           TermCreator<T> emptyCreator,
+                           Class<T> cl,
+                           boolean columnValues) {
         this.emptyCreator = emptyCreator;
         this.termCreators = termCreators;
         this.logicCreators = logicCreators;
         this.cl = cl;
+        this.columnValues = columnValues;
     }
 
     /**
@@ -100,5 +110,15 @@ public class QueryContext<T extends Query> {
      */
     public Class<T> getCl() {
         return cl;
+    }
+
+    /**
+     * Returns true if column references are allowed as right-hand value of a term (<code>.a &gt; .b</code>).
+     * Values of such terms have the type {@link dev.gruen.query.term.Value.Type#FIELD}.
+     *
+     * @return true if column values are enabled
+     */
+    public boolean isColumnValues() {
+        return columnValues;
     }
 }

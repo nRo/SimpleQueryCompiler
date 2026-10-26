@@ -21,6 +21,7 @@ public class QueryCompilerBuilder<T extends Query> {
     private final Class<T> cl;
     private final List<QueryOptimization> optimizations = new ArrayList<>();
     private TermCreator<T> emptyCreator;
+    private boolean columnValues;
 
     private QueryCompilerBuilder(Class<T> cl) {
         this.cl = cl;
@@ -172,13 +173,36 @@ public class QueryCompilerBuilder<T extends Query> {
     }
 
     /**
+     * Allows column references as right-hand value of a term, e.g. <code>.a &gt; .b</code> or
+     * <code>price lt .limit</code>. Creators receive such a value as {@link dev.gruen.query.term.Value.Type#FIELD}.
+     * Without this option a column on the right-hand side is a syntax error.
+     *
+     * @return <code>self</code> for method chaining
+     */
+    public QueryCompilerBuilder<T> withColumnValues() {
+        return withColumnValues(true);
+    }
+
+    /**
+     * Enables or disables column references as right-hand value of a term, see {@link #withColumnValues()}.
+     * Disabled by default.
+     *
+     * @param enabled true to allow column references as values
+     * @return <code>self</code> for method chaining
+     */
+    public QueryCompilerBuilder<T> withColumnValues(boolean enabled) {
+        this.columnValues = enabled;
+        return this;
+    }
+
+    /**
      * Creates the query context used by the resulting compiler
      *
      * @return query context
      */
     private QueryContext<T> createContext() {
         return new QueryContext<>(
-                termCreators, logicCreators, emptyCreator, cl
+                termCreators, logicCreators, emptyCreator, cl, columnValues
         );
     }
 

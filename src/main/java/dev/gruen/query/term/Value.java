@@ -7,6 +7,7 @@ package dev.gruen.query.term;
 import dev.gruen.query.compiler.QueryCompilerException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -14,7 +15,7 @@ import java.util.regex.Pattern;
  */
 public class Value {
     public enum Type {
-        DOUBLE, LONG, STRING, BOOLEAN, PATTERN, NULL, LIST
+        DOUBLE, LONG, STRING, BOOLEAN, PATTERN, NULL, LIST, FIELD
     }
 
     private Object value;
@@ -30,6 +31,20 @@ public class Value {
         setValue(value);
     }
 
+
+    /**
+     * Creates a value that references a field (column), e.g. the right-hand side of <code>.a &gt; .b</code>.
+     * The resulting value has the type {@link Type#FIELD}.
+     *
+     * @param field referenced field
+     * @return value of type {@link Type#FIELD}
+     */
+    public static Value ofField(Field field) {
+        if (field == null) {
+            throw new QueryCompilerException("field must not be null");
+        }
+        return new Value(field);
+    }
 
     /**
      * Sets the value object and updates the type.
@@ -115,6 +130,15 @@ public class Value {
     }
 
     /**
+     * Returns true if the value is a reference to a {@link Field} (column).
+     *
+     * @return true if field
+     */
+    public boolean isField() {
+        return type == Type.FIELD;
+    }
+
+    /**
      * Returns the value as Number. If the value is not a number a {@link QueryCompilerException} is thrown.
      *
      * @return double value
@@ -184,13 +208,31 @@ public class Value {
     }
 
     /**
+     * Returns the referenced {@link Field}. If the value is not a field a {@link QueryCompilerException} is thrown.
+     *
+     * @return field value
+     */
+    public Field getField() {
+        if (type == Type.FIELD) {
+            return (Field) value;
+        }
+
+        throw new QueryCompilerException(String.format("value is not available as field (%s)", type.name()));
+    }
+
+    /**
      * Returns the value as String. If the value is not a String the respective <code>toString()</code> value is returned.
+     * For values of type {@link Type#FIELD} the field name is returned as it was written in the query
+     * (e.g. <code>.'my col'</code>).
      *
      * @return String value
      */
     public String getString() {
         if (type == Type.NULL) {
             return null;
+        }
+        if (type == Type.FIELD) {
+            return getField().getFullPath();
         }
         return value.toString();
     }
@@ -210,7 +252,7 @@ public class Value {
 
     /**
      * Updates the type of the value.
-     * Supported types are: Double, Long, String, Boolean, Integer, Float and Pattern.
+     * Supported types are: Double, Long, String, Boolean, Integer, Float, Pattern, List and Field.
      */
     private void updateType() {
         if (value == null) {
@@ -234,6 +276,8 @@ public class Value {
             type = Type.BOOLEAN;
         } else if (value instanceof Pattern) {
             type = Type.PATTERN;
+        } else if (value instanceof Field) {
+            type = Type.FIELD;
         } else if (value instanceof Integer intValue) {
             type = Type.LONG;
             value = intValue.longValue();
@@ -252,6 +296,50 @@ public class Value {
      */
     @Override
     public String toString() {
-        return isNull() ? null : value.toString();
+        if (isNull()) {
+            return null;
+        }
+        return isField() ? getString() : value.toString();
+    }
+
+    /**
+     * Two values are equal if they have the same type and the same value.
+     * Patterns are compared by their regular expression and flags, fields by their path.
+     *
+     * @param o other object
+     * @return true if equal
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Value other = (Value) o;
+        if (type != other.type) {
+            return false;
+        }
+        if (type == Type.PATTERN) {
+            Pattern a = (Pattern) value;
+            Pattern b = (Pattern) other.value;
+            return a.pattern().equals(b.pattern()) && a.flags() == b.flags();
+        }
+        return Objects.equals(value, other.value);
+    }
+
+    /**
+     * Calculates the hashcode of this value, consistent with {@link #equals(Object)}
+     *
+     * @return hashcode
+     */
+    @Override
+    public int hashCode() {
+        if (type == Type.PATTERN) {
+            Pattern p = (Pattern) value;
+            return Objects.hash(type, p.pattern(), p.flags());
+        }
+        return Objects.hash(type, value);
     }
 }

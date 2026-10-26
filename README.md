@@ -103,6 +103,45 @@ builder.withTermCreator(new TermOperator("PHRASE"), (node, field, value) -> ...)
 x PHRASE 'test phrase' || y == 'test'
 ```
 
+### Column values (column-to-column comparison)
+
+By default the right-hand side of a term must be a value (number, text, boolean or `null`).
+Call `withColumnValues()` to also allow a column reference there:
+
+```java
+QueryCompiler<PrintQuery> compiler = QueryCompilerBuilder
+        .createDefault(PrintQuery.class, new PrintQueryCreator())
+        .withColumnValues()
+        .build();
+
+compiler.compile(".a > .b && price lt .limit && 'my col' != .'other col'");
+// ((.a > .b) && (price < .limit) && ('my col' != .'other col'))
+```
+
+* The right-hand column is written like any other column with a leading `.` prefix; quoted names are allowed
+  (`.'other col'`, `.a.'b c'`). A name without the prefix (`a > b`) is still a syntax error.
+* It works with all term operators including custom operators registered with `withTermCreator`
+  (`.a like .b`) and can be combined with `and`, `or`, `xor`, `nor`, `!` and brackets.
+* Regex terms (`~`) and `in` / `!in` lists do not support columns.
+* Without `withColumnValues()` (the default) a column on the right-hand side is rejected with a syntax error,
+  exactly as before. `withColumnValues(false)` switches it off again.
+
+Creators (`eq`, `ne`, `lt`, `le`, `gt`, `ge`, `text` and custom term creators) receive the column as a `Value` of type
+`Value.Type.FIELD`:
+
+```java
+builder.withTermCreator(TermOperators.GT, (node, field, value) -> {
+    if (value.isField()) {
+        Field other = value.getField(); // built the same way as the field on the left-hand side
+        return compareColumns(field, other);
+    }
+    return compareWithValue(field, value);
+});
+```
+
+`value.getString()` and `value.toString()` return the column name as it was written in the query (`.'other col'`).
+`PrintQueryCreator` prints such values the same way, so printed queries can be parsed again.
+
 ### Print the query tree
 
 Queries are first compiled to a `QueryTree` before the target object is created. The tree can be printed:

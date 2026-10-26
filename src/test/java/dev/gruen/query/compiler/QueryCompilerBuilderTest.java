@@ -125,6 +125,31 @@ class QueryCompilerBuilderTest {
     }
 
     @Test
+    void testWithColumnValues() {
+        QueryCompilerBuilder<PrintQuery> builder = QueryCompilerBuilder.createDefault(PrintQuery.class, new PrintQueryCreator());
+        Assertions.assertFalse(builder.build().getContext().isColumnValues());
+
+        Assertions.assertSame(builder, builder.withColumnValues());
+        Assertions.assertTrue(builder.build().getContext().isColumnValues());
+
+        Assertions.assertSame(builder, builder.withColumnValues(false));
+        Assertions.assertFalse(builder.build().getContext().isColumnValues());
+
+        builder.withColumnValues(true);
+        Assertions.assertTrue(builder.build().getContext().isColumnValues());
+    }
+
+    @Test
+    void testColumnValuesAreNotSharedBetweenCompilers() {
+        QueryCompilerBuilder<PrintQuery> builder = QueryCompilerBuilder.createDefault(PrintQuery.class, new PrintQueryCreator());
+        QueryCompiler<PrintQuery> disabled = builder.build();
+        QueryCompiler<PrintQuery> enabled = builder.withColumnValues().build();
+
+        Assertions.assertEquals("(.a > .b)", enabled.compile(".a > .b").toString());
+        Assertions.assertThrows(QueryCompilerException.class, () -> disabled.compile(".a > .b"));
+    }
+
+    @Test
     void testWithEmptyCreator() {
         TermCreator<PrintQuery> emptyCreator = (node, field, value) -> new PrintQuery() {
             @Override

@@ -113,6 +113,81 @@ class ValueTest {
     }
 
     @Test
+    void testFieldValue() {
+        Field field = new Field(".a.'b c'", ".a", "b c");
+        Value fieldValue = Value.ofField(field);
+
+        Assertions.assertEquals(Value.Type.FIELD, fieldValue.getType());
+        Assertions.assertTrue(fieldValue.isField());
+        Assertions.assertFalse(fieldValue.isNull());
+        Assertions.assertFalse(fieldValue.isString());
+        Assertions.assertFalse(fieldValue.isNumber());
+        Assertions.assertFalse(fieldValue.isBoolean());
+        Assertions.assertFalse(fieldValue.isPattern());
+        Assertions.assertFalse(fieldValue.isList());
+        Assertions.assertSame(field, fieldValue.getField());
+        Assertions.assertSame(field, fieldValue.getValue());
+        Assertions.assertEquals(".a.'b c'", fieldValue.getString());
+        Assertions.assertEquals(".a.'b c'", fieldValue.toString());
+
+        Value viaConstructor = new Value(field);
+        Assertions.assertEquals(Value.Type.FIELD, viaConstructor.getType());
+        Assertions.assertEquals(fieldValue, viaConstructor);
+    }
+
+    @Test
+    void testFieldValueConversionExceptions() {
+        Value fieldValue = Value.ofField(new Field(".a"));
+
+        Assertions.assertThrows(QueryCompilerException.class, fieldValue::getNumber);
+        Assertions.assertThrows(QueryCompilerException.class, fieldValue::getDouble);
+        Assertions.assertThrows(QueryCompilerException.class, fieldValue::getLong);
+        Assertions.assertThrows(QueryCompilerException.class, fieldValue::getBoolean);
+        Assertions.assertThrows(QueryCompilerException.class, fieldValue::getPattern);
+        Assertions.assertThrows(QueryCompilerException.class, fieldValue::getList);
+
+        Assertions.assertThrows(QueryCompilerException.class, () -> new Value("x").getField());
+        Assertions.assertThrows(QueryCompilerException.class, () -> new Value(null).getField());
+        Assertions.assertThrows(QueryCompilerException.class, () -> Value.ofField(null));
+    }
+
+    @Test
+    void testFieldValueEqualsAndHashCode() {
+        Value a = Value.ofField(new Field(".a"));
+        Value sameA = Value.ofField(new Field(".a"));
+        Value b = Value.ofField(new Field(".b"));
+
+        Assertions.assertEquals(a, a);
+        Assertions.assertEquals(a, sameA);
+        Assertions.assertEquals(a.hashCode(), sameA.hashCode());
+        Assertions.assertNotEquals(a, b);
+        Assertions.assertNotEquals(a, new Value(".a"));
+        Assertions.assertNotEquals(new Value(".a"), a);
+        Assertions.assertNotEquals(a, null);
+        Assertions.assertNotEquals(a, ".a");
+        Assertions.assertNotEquals(a, Value.ofField(new Field(".a.b", ".a", "b")));
+    }
+
+    @Test
+    void testEqualsAndHashCode() {
+        Assertions.assertEquals(new Value(1), new Value(1L));
+        Assertions.assertEquals(new Value(1).hashCode(), new Value(1L).hashCode());
+        Assertions.assertNotEquals(new Value(1), new Value(1.0));
+        Assertions.assertEquals(new Value(null), new Value(null));
+        Assertions.assertEquals(new Value(null).hashCode(), new Value(null).hashCode());
+        Assertions.assertNotEquals(new Value(null), new Value("null"));
+        Assertions.assertEquals(new Value("x"), new Value("x"));
+        Assertions.assertNotEquals(new Value("x"), new Value("y"));
+        Assertions.assertEquals(new Value(true), new Value(true));
+        Assertions.assertEquals(new Value(Pattern.compile("a.*")), new Value(Pattern.compile("a.*")));
+        Assertions.assertEquals(new Value(Pattern.compile("a.*")).hashCode(), new Value(Pattern.compile("a.*")).hashCode());
+        Assertions.assertNotEquals(new Value(Pattern.compile("a.*")), new Value(Pattern.compile("a.*", Pattern.CASE_INSENSITIVE)));
+        Assertions.assertNotEquals(new Value(Pattern.compile("a.*")), new Value(Pattern.compile("b")));
+        Assertions.assertEquals(new Value(List.of(new Value(1), Value.ofField(new Field("a")))),
+                new Value(List.of(new Value(1), Value.ofField(new Field("a")))));
+    }
+
+    @Test
     void testToString() {
         Value stringValue = new Value("test");
         Assertions.assertEquals("test", stringValue.toString());

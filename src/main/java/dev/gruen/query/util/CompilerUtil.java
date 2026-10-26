@@ -42,6 +42,17 @@ public class CompilerUtil {
     }
 
     /**
+     * Creates a Value object of type {@link Value.Type#FIELD} from a column value context.
+     * The field is created the same way as the field of a variable context.
+     *
+     * @param ctx column value context
+     * @return value object
+     */
+    public static Value createValue(QueryParser.Column_valueContext ctx) {
+        return Value.ofField(createField(ctx.getText()));
+    }
+
+    /**
      * Creates a Value object from a value context
      *
      * @param ctx value context
@@ -135,7 +146,10 @@ public class CompilerUtil {
      * @return field object
      */
     public static Field createField(QueryParser.VariableContext ctx) {
-        String fullPath = ctx.getText();
+        return createField(ctx.getText());
+    }
+
+    private static Field createField(String fullPath) {
         String[] path = StringUtil.splitQuoted(fullPath, '.');
         return new Field(fullPath, path);
     }

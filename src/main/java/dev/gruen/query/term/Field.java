@@ -5,6 +5,9 @@ package dev.gruen.query.term;
 
 import dev.gruen.query.util.StringUtil;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * Represents the field in a query term (field operator value)
  */
@@ -160,5 +163,33 @@ public class Field {
     @Override
     public String toString() {
         return getJoinedPath();
+    }
+
+    /**
+     * Two fields are equal if their full path and path array are equal
+     *
+     * @param o other object
+     * @return true if equal
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Field other = (Field) o;
+        return Objects.equals(fullPath, other.fullPath) && Arrays.equals(path, other.path);
+    }
+
+    /**
+     * Calculates the hashcode of this field, consistent with {@link #equals(Object)}
+     *
+     * @return hashcode
+     */
+    @Override
+    public int hashCode() {
+        return 31 * Objects.hashCode(fullPath) + Arrays.hashCode(path);
     }
 }

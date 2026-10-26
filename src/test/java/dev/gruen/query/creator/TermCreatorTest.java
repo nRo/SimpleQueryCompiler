@@ -45,6 +45,24 @@ class TermCreatorTest {
     }
 
     @Test
+    void testTermCreatorWithFieldValue() {
+        TermCreator<PrintQuery> termCreator = (node, field, value) -> new PrintQuery() {
+            @Override
+            public String toString() {
+                return String.format("(%s == %s)", field.getFullPath(),
+                        value.isField() ? "column " + value.getField().getFullPath() : value);
+            }
+        };
+
+        Field field = new Field(".x", ".x");
+        PrintQuery query = termCreator.create(null, field, Value.ofField(new Field(".y")));
+        Assertions.assertEquals("(.x == column .y)", query.toString());
+
+        query = termCreator.create(null, field, new Value(1));
+        Assertions.assertEquals("(.x == 1)", query.toString());
+    }
+
+    @Test
     void testTermCreatorWithLambda() {
         TermCreator<PrintQuery> termCreator = (node, field, value) -> new PrintQuery() {
             @Override
